@@ -186,6 +186,19 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
     })
   }
 
+  // 微信快捷登录：由 Supabase Custom OAuth 接管微信授权与回调
+  const handleWechatLogin = () => {
+    void run(async () => {
+      const { error } = await db().auth.signInWithOAuth({
+        provider: 'custom:wechat',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      })
+      if (error) throw error
+    })
+  }
+
   // 发起注册：校验密码并发送 6 位验证码到邮箱
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault()
