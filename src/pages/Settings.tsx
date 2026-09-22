@@ -104,6 +104,15 @@ export function Settings({
     })
   }
 
+  const handleBindWechat = () => {
+    void run(async () => {
+      const { error } = await db().auth.linkIdentity({
+        provider: 'custom:wechat',
+      })
+      if (error) throw error
+    })
+  }
+
   const handleUpdatePassword = (e: React.FormEvent) => {
     e.preventDefault()
     void run(async () => {
@@ -407,6 +416,28 @@ export function Settings({
                     }
                   >
                     导出数据
+                  </Button>
+                </div>
+              )}
+
+              {!demo && (
+                <div
+                  style={{
+                    display: 'grid',
+                    gap: '6px',
+                    padding: '8px 0',
+                    borderTop: '1px dashed #d5dec6',
+                    borderBottom: '1px dashed #d5dec6',
+                  }}
+                >
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#445233' }}>
+                    账号安全 · 绑定微信
+                  </label>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#66705b', lineHeight: 1.5 }}>
+                    当前 BIBU 账号登录后，可把微信身份绑定到同一个账号。绑定后，下次可以直接用微信快捷登录。
+                  </p>
+                  <Button tone="green" type="button" disabled={busy} onClick={handleBindWechat}>
+                    {busy ? '正在连接微信…' : '绑定微信账号'}
                   </Button>
                 </div>
               )}
