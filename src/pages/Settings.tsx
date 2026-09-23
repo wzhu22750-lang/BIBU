@@ -6,7 +6,8 @@ import { AccountDeletion } from '../components/AccountDeletion'
 import { InactiveOutbox } from '../components/InactiveOutbox'
 import { InvitationManager } from '../components/InvitationManager'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { UserIdentity } from '@supabase/supabase-js'
 import type { SpaceController } from '../hooks/useSpace'
 import type { AvatarType, Page } from '../lib/types'
 import { Button, Modal, PageHeading, useTask, useToast } from '../components/ui'
@@ -14,6 +15,7 @@ import { Icon } from '../components/PixelArt'
 import { CharacterSelector, PixelCharacter, type PixelCharacterAnimation } from '../components/pet'
 import { CHARACTER_MAP } from '../lib/pet'
 import { db } from '../lib/supabase'
+import { describeWechatError } from '../lib/wechatAuth'
 import { localDateInput } from '../lib/dates'
 import { PixelDatePicker } from '../components/PixelPickers'
 
@@ -75,10 +77,37 @@ export function Settings({
     [newPass, setNewPass] = useState(''),
     [closing, setClosing] = useState(false),
     [closeText, setCloseText] = useState(''),
+    [identities, setIdentities] = useState<{ email: boolean } | null>(null),
+    [wechatIdentity, setWechatIdentity] = useState<UserIdentity | null>(null),
+    [unbindWechat, setUnbindWechat] = useState(false),
     { busy, run } = useTask(),
     toast = useToast()
 
   const daysTogether = getDaysCount(since)
+
+  // 账号安全：读取当前 Supabase User 的 identities，展示邮箱/微信绑定状态。
+  // 从微信授权页回跳后整个应用会重新加载，因此挂载时拉取一次即可。
+  useEffect(() => {
+    if (demo) return
+    let active = true
+    void db()
+      .auth.getUserIdentities()
+      .then(({ data }) => {
+        if (!active) return
+        const list = data?.identities ?? []
+        setIdentities({ email: list.some((identity) => identity.provider === 'email') })
+        setWechatIdentity(list.find((identity) => identity.provider === 'custom:wechat') ?? null)
+      })
+      .catch(() => {
+        if (active) {
+          setIdentities(null)
+          setWechatIdentity(null)
+        }
+      })
+    return () => {
+      active = false
+    }
+  }, [demo, space.me.id])
 
   const handleSelectCharacter = (newId: AvatarType) => {
     setAvatar(newId)
@@ -104,12 +133,28 @@ export function Settings({
     })
   }
 
+  // 绑定微信：走 Supabase Identity Linking，把微信 identity 挂到当前 Supabase User 上，
+  // 不会创建第二个账号。浏览器里 supabase-js 会自动跳转微信授权页。
+  // 若微信 identity 已属于另一个账号，回跳后由 App 的错误提示给出明确说明。
   const handleBindWechat = () => {
     void run(async () => {
       const { error } = await db().auth.linkIdentity({
         provider: 'custom:wechat',
+        options: { redirectTo: window.location.origin },
       })
-      if (error) throw error
+      if (error) throw new Error(describeWechatError(error))
+    })
+  }
+
+  // 解绑微信：只在账号还有邮箱密码登录方式时允许，避免误操作后失去所有登录方式。
+  const handleUnbindWechat = () => {
+    void run(async () => {
+      if (!wechatIdentity) return
+      const { error } = await db().auth.unlinkIdentity(wechatIdentity)
+      if (error) throw new Error(describeWechatError(error))
+      setUnbindWechat(false)
+      setWechatIdentity(null)
+      toast('已解除微信绑定')
     })
   }
 
@@ -154,6 +199,32 @@ export function Settings({
               </Button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {unbindWechat && (
+        <Modal
+          title="解除微信绑定？"
+          onClose={() => {
+            if (!busy) setUnbindWechat(false)
+          }}
+        >
+          <div className="form-stack">
+            <p>解绑后，这个微信将不能用来登录当前 BIBU 账号。你仍然可以用邮箱密码登录。</p>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button tone="pink" type="button" disabled={busy} onClick={handleUnbindWechat}>
+                {busy ? '正在解绑…' : '确认解绑'}
+              </Button>
+              <Button
+                tone="white"
+                type="button"
+                disabled={busy}
+                onClick={() => setUnbindWechat(false)}
+              >
+                先不解绑
+              </Button>
+            </div>
+          </div>
         </Modal>
       )}
 
@@ -431,14 +502,59 @@ export function Settings({
                   }}
                 >
                   <label style={{ fontSize: '11px', fontWeight: 700, color: '#445233' }}>
-                    账号安全 · 绑定微信
+                    账号安全 · 登录方式
                   </label>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: '11px',
+                      color: '#445233',
+                    }}
+                  >
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Icon name="lock" size={13} /> 邮箱登录
+                    </span>
+                    <strong>{identities?.email ? '已绑定' : '未绑定'}</strong>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: '11px',
+                      color: '#445233',
+                    }}
+                  >
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Icon name="wechat" size={13} /> 微信快捷登录
+                    </span>
+                    <strong>{wechatIdentity ? '已绑定' : '未绑定'}</strong>
+                  </div>
+                  {!wechatIdentity ? (
+                    <Button tone="green" type="button" disabled={busy} onClick={handleBindWechat}>
+                      <Icon name="wechat" size={15} />
+                      {busy ? '正在连接微信…' : '绑定微信'}
+                    </Button>
+                  ) : identities?.email ? (
+                    <Button
+                      tone="white"
+                      type="button"
+                      disabled={busy}
+                      onClick={() => setUnbindWechat(true)}
+                    >
+                      解除微信绑定
+                    </Button>
+                  ) : (
+                    <p style={{ margin: 0, fontSize: '11px', color: '#a05a5a', lineHeight: 1.5 }}>
+                      当前账号没有邮箱密码登录，为避免失去所有登录方式，暂不支持解绑微信。
+                    </p>
+                  )}
                   <p style={{ margin: 0, fontSize: '11px', color: '#66705b', lineHeight: 1.5 }}>
-                    当前 BIBU 账号登录后，可把微信身份绑定到同一个账号。绑定后，下次可以直接用微信快捷登录。
+                    绑定后，邮箱和微信登录进入的是同一个 BIBU
+                    账号与同一个空间；微信授权信息只用于身份识别。
                   </p>
-                  <Button tone="green" type="button" disabled={busy} onClick={handleBindWechat}>
-                    {busy ? '正在连接微信…' : '绑定微信账号'}
-                  </Button>
                 </div>
               )}
 

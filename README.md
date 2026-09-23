@@ -140,6 +140,7 @@ npm run android:release:build # 签名 Release APK
 - 视觉语言、色彩 Token 与组件规范 → [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)
 - 测试套件与发版验收清单 → [VERIFICATION.md](VERIFICATION.md)
 - 完成度、已知问题与发布阻塞项 → [CURRENT_STATUS.md](CURRENT_STATUS.md)
+- 微信快捷登录（Web）部署与配置 → [docs/wechat-web-login.md](docs/wechat-web-login.md)
 
 ---
 

@@ -7,6 +7,11 @@ import { Capacitor } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
 import type { Session } from '@supabase/supabase-js'
 import { configured, errorText, supabase } from './lib/supabase'
+import {
+  clearOAuthErrorFromLocation,
+  describeWechatError,
+  readOAuthErrorFromLocation,
+} from './lib/wechatAuth'
 import { useBibu } from './hooks/useBibu'
 import { useSpace } from './hooks/useSpace'
 import { registerDevicePush, storePushToken } from './lib/pushRegistration'
@@ -240,6 +245,14 @@ export default function App() {
       if (errors.length)
         setToast({ message: `上次注销后的本机清理未完全确认：${errors.join('；')}`, error: true })
     })
+  }, [])
+  // 微信 OAuth 回跳失败时（取消授权 / identity 已被其他账号绑定 / state 失效等），
+  // GoTrue 会把 error 参数带回 redirectTo。这里解析并转成对普通用户友好的提示。
+  useEffect(() => {
+    const oauthError = readOAuthErrorFromLocation(window.location)
+    if (!oauthError) return
+    clearOAuthErrorFromLocation()
+    setToast({ message: describeWechatError(oauthError), error: true })
   }, [])
   useEffect(() => {
     if (!supabase) return

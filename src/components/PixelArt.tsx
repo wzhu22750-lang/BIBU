@@ -40,6 +40,7 @@ export type IconName =
   | 'grid'
   | 'trash'
   | 'wand'
+  | 'wechat'
 const paths: Record<IconName, string> = {
   shirt:
     'M4 3h6v2H4zM2 3h2v8H2zm2 6h4v2H4zm2 0h2v10H6zm2 10h8v2H8zm8-10h2v10h-2zm0 0h4v2h-4zm4-6h2v8h-2zm-6 0h6v2h-6zm-4 2h4v2h-4z',
@@ -73,6 +74,8 @@ const paths: Record<IconName, string> = {
   upload: 'M10 2h4v3h3v3h3v3h-5v6H9v-6H4V8h3V5h3zM2 16h3v4h14v-4h3v7H2z',
   edit: 'M3 17v4h4L19 9l-4-4zm3 2v-1l9-9 1 1-9 9zm11-12 2-2 3 3-2 2z',
   spark: 'M9 0h3v5h3v3h5v3h-5v3h-3v5H9v-5H6v-3H1V8h5V5h3zm10 16h2v3h3v2h-3v3h-2v-3h-3v-2h3z',
+  // 像素风微信气泡：气泡主体 + 两个眼睛（evenodd 镂空）+ 左下小尾巴
+  wechat: 'M3 3h18v2h2v10h-2v2h-7v2h-2v-2h-1v3H9v-3H5v2H3v-2H1V5h2zM8 8h2v2H8zm6 0h2v2h-2z',
 }
 export function Icon({
   name,

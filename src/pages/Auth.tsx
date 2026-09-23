@@ -2,11 +2,17 @@ import { InactiveEventOutbox } from '../components/InactiveEventOutbox'
 import { AccountDeletion } from '../components/AccountDeletion'
 import { InactiveOutbox } from '../components/InactiveOutbox'
 import { useEffect, useRef, useState } from 'react'
+import { Capacitor } from '@capacitor/core'
 import { configured, db } from '../lib/supabase'
+import { describeWechatError } from '../lib/wechatAuth'
 import { Button, useTask, useToast } from '../components/ui'
 import { Icon, PixelFlower, PixelPal } from '../components/PixelArt'
 import type { SpaceController } from '../hooks/useSpace'
 import { InviteCode } from './Settings'
+
+// 微信快捷登录依赖浏览器 OAuth 跳转；原生 App 内（Capacitor WebView）不展示，
+// 保持原有邮箱 + 深链接登录逻辑不受影响。
+const isNativePlatform = Capacitor.isNativePlatform()
 
 const OTP_LENGTH = 6
 const OTP_COUNTDOWN = 60
@@ -186,7 +192,8 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
     })
   }
 
-  // 微信快捷登录：由 Supabase Custom OAuth 接管微信授权与回调
+  // 微信快捷登录：由 Supabase Custom OAuth（custom:wechat）接管微信授权与回调。
+  // 成功时 supabase-js 会自动跳转微信授权页；失败时给出对普通用户友好的提示。
   const handleWechatLogin = () => {
     void run(async () => {
       const { error } = await db().auth.signInWithOAuth({
@@ -195,7 +202,7 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
           redirectTo: window.location.origin,
         },
       })
-      if (error) throw error
+      if (error) throw new Error(describeWechatError(error))
     })
   }
 
@@ -343,6 +350,21 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
         </p>
         {configured ? (
           <div>
+            {!isNativePlatform && regStep !== 'verify' && (
+              <>
+                <Button
+                  tone="green"
+                  type="button"
+                  disabled={busy}
+                  onClick={handleWechatLogin}
+                  style={{ width: '100%' }}
+                >
+                  <Icon name="wechat" size={17} />
+                  {busy ? '正在跳转微信…' : '微信快捷登录'}
+                </Button>
+                <div className="auth-divider">或使用邮箱账号</div>
+              </>
+            )}
             {authMode === 'login' ? (
               /* 登录主模式：全流程邮箱 + 密码登录 */
               <form className="form-stack" onSubmit={handleLoginSubmit}>
