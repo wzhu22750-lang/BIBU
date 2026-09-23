@@ -1,6 +1,7 @@
-project_id = "bibu"
+project_id = "zqwzdoejxsfscisudacu"
 
-# 微信 OAuth compatibility bridge 供浏览器（未登录）与 GoTrue 服务端调用，
-# 必须关闭 Edge Function 的 JWT 校验。
+[functions.wechat-auth]
+verify_jwt = false
+
 [functions.wechat-oauth]
 verify_jwt = false

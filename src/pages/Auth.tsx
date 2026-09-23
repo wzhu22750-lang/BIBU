@@ -4,7 +4,7 @@ import { InactiveOutbox } from '../components/InactiveOutbox'
 import { useEffect, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { configured, db } from '../lib/supabase'
-import { describeWechatError } from '../lib/wechatAuth'
+import { describeWechatError, initiateWechatLogin } from '../lib/wechatAuth'
 import { Button, useTask, useToast } from '../components/ui'
 import { Icon, PixelFlower, PixelPal } from '../components/PixelArt'
 import type { SpaceController } from '../hooks/useSpace'
@@ -35,12 +35,7 @@ function OtpInput({
 }) {
   const refs = useRef<(HTMLInputElement | null)[]>([])
   const digits = Array.from({ length: OTP_LENGTH }, (_, i) => value[i] || '')
-  const setValue = (next: string) =>
-    onChange(
-      next
-        .replace(/\D/g, '')
-        .slice(0, OTP_LENGTH),
-    )
+  const setValue = (next: string) => onChange(next.replace(/\D/g, '').slice(0, OTP_LENGTH))
   const focusIndex = (index: number) => {
     const clamped = Math.max(0, Math.min(OTP_LENGTH - 1, index))
     const el = refs.current[clamped]
@@ -92,10 +87,7 @@ function OtpInput({
   }
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault()
-    const extracted = e.clipboardData
-      .getData('text')
-      .replace(/\D/g, '')
-      .slice(0, OTP_LENGTH)
+    const extracted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LENGTH)
     if (!extracted) return
     const start = digits.findIndex((d) => !d)
     if (start === -1) return
@@ -192,17 +184,15 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
     })
   }
 
-  // 微信快捷登录：由 Supabase Custom OAuth（custom:wechat）接管微信授权与回调。
-  // 成功时 supabase-js 会自动跳转微信授权页；失败时给出对普通用户友好的提示。
+  // 微信快捷登录：由 BIBU 独立后端管理微信授权与换码，不依赖 Supabase Custom OAuth Provider。
+  // 成功跳转微信授权页；失败时给出友好提示。
   const handleWechatLogin = () => {
     void run(async () => {
-      const { error } = await db().auth.signInWithOAuth({
-        provider: 'custom:wechat',
-        options: {
-          redirectTo: window.location.origin,
-        },
-      })
-      if (error) throw new Error(describeWechatError(error))
+      try {
+        await initiateWechatLogin()
+      } catch (error) {
+        throw new Error(describeWechatError(error))
+      }
     })
   }
 
@@ -227,7 +217,10 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
         ) {
           throw new Error('该邮箱已注册，请直接使用密码登录')
         }
-        if ((error as { status?: number }).status === 429 || /rate|freq|频繁|频率/i.test(error.message)) {
+        if (
+          (error as { status?: number }).status === 429 ||
+          /rate|freq|频繁|频率/i.test(error.message)
+        ) {
           throw new Error('发送验证码太频繁，请稍后再试')
         }
         throw error
@@ -258,7 +251,10 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
         email: trimmedEmail,
       })
       if (error) {
-        if ((error as { status?: number }).status === 429 || /rate|freq|频繁|频率/i.test(error.message)) {
+        if (
+          (error as { status?: number }).status === 429 ||
+          /rate|freq|频繁|频率/i.test(error.message)
+        ) {
           throw new Error('发送太频繁，请稍后再试')
         }
         throw error

@@ -4,8 +4,12 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/api/wechat/:path*",
+      "destination": "https://zqwzdoejxsfscisudacu.supabase.co/functions/v1/wechat-auth/:path*"
+    },
+    {
       "source": "/wechat-oauth/:path*",
-      "destination": "https://zqwzdoejxsfscisudacu.supabase.co/functions/v1/wechat-oauth/:path*"
+      "destination": "https://zqwzdoejxsfscisudacu.supabase.co/functions/v1/wechat-auth/:path*"
     },
     { "source": "/((?!assets/|demo/|favicon.svg).*)", "destination": "/index.html" }
   ],

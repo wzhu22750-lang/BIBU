@@ -8,9 +8,10 @@ import { App as CapApp } from '@capacitor/app'
 import type { Session } from '@supabase/supabase-js'
 import { configured, errorText, supabase } from './lib/supabase'
 import {
-  clearOAuthErrorFromLocation,
+  clearWechatParamsFromLocation,
   describeWechatError,
-  readOAuthErrorFromLocation,
+  exchangeWechatTicket,
+  readWechatParamsFromLocation,
 } from './lib/wechatAuth'
 import { useBibu } from './hooks/useBibu'
 import { useSpace } from './hooks/useSpace'
@@ -246,13 +247,32 @@ export default function App() {
         setToast({ message: `上次注销后的本机清理未完全确认：${errors.join('；')}`, error: true })
     })
   }, [])
-  // 微信 OAuth 回跳失败时（取消授权 / identity 已被其他账号绑定 / state 失效等），
-  // GoTrue 会把 error 参数带回 redirectTo。这里解析并转成对普通用户友好的提示。
+  // 微信快捷登录/绑定回跳处理：
+  // 1. 登录回跳携带 wechat_ticket：向服务端原子换取合法 Supabase 会话并写入客户端
+  // 2. 绑定回跳携带 wechat_bind=success：提示绑定成功
+  // 3. 授权取消或错误携带 wechat_error：提示普通用户易懂的说明文案
   useEffect(() => {
-    const oauthError = readOAuthErrorFromLocation(window.location)
-    if (!oauthError) return
-    clearOAuthErrorFromLocation()
-    setToast({ message: describeWechatError(oauthError), error: true })
+    const params = readWechatParamsFromLocation(window.location)
+    if (!params.ticket && !params.error && !params.bindSuccess) return
+    clearWechatParamsFromLocation()
+
+    if (params.error) {
+      setToast({ message: describeWechatError(params.error), error: true })
+      return
+    }
+    if (params.bindSuccess) {
+      setToast({ message: '微信绑定成功！后续可用微信或邮箱快捷登录同一账号', error: false })
+      return
+    }
+    if (params.ticket) {
+      void exchangeWechatTicket(params.ticket)
+        .then(() => {
+          setToast({ message: '微信快捷登录成功，欢迎回家！', error: false })
+        })
+        .catch((err) => {
+          setToast({ message: describeWechatError(err), error: true })
+        })
+    }
   }, [])
   useEffect(() => {
     if (!supabase) return
