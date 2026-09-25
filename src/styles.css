@@ -2050,10 +2050,18 @@ img {
   font-size: 14px;
 }
 
-.retro-window-bar.bar-pink { background: var(--pink); }
-.retro-window-bar.bar-yellow { background: var(--yellow); }
-.retro-window-bar.bar-green { background: var(--green); }
-.retro-window-bar.bar-blue { background: var(--blue); }
+.retro-window-bar.bar-pink {
+  background: var(--pink);
+}
+.retro-window-bar.bar-yellow {
+  background: var(--yellow);
+}
+.retro-window-bar.bar-green {
+  background: var(--green);
+}
+.retro-window-bar.bar-blue {
+  background: var(--blue);
+}
 
 .retro-cartridge-body {
   padding: 16px 18px;
@@ -2138,7 +2146,7 @@ img {
   font-weight: 600;
   color: var(--ink);
   outline: none;
-  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.1);
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.1);
 }
 .passport-input:focus {
   background: #fffae6;
@@ -2202,7 +2210,13 @@ img {
 }
 .ticket-perforation-bar {
   height: 6px;
-  background: repeating-linear-gradient(90deg, #20211d 0, #20211d 6px, transparent 6px, transparent 12px);
+  background: repeating-linear-gradient(
+    90deg,
+    #20211d 0,
+    #20211d 6px,
+    transparent 6px,
+    transparent 12px
+  );
   opacity: 0.35;
   margin: 0 12px;
 }
@@ -2246,8 +2260,13 @@ img {
   animation: pulse-heart 1.6s infinite ease-in-out;
 }
 @keyframes pulse-heart {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.18); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
 }
 .ticket-connect-tag {
   font-size: 8px;
@@ -2483,7 +2502,6 @@ img {
   color: #6b775e;
   margin: 2px 0 0 0;
 }
-
 
 .settings-avatar {
   display: flex;
@@ -4867,6 +4885,18 @@ img {
   color: #ff7ab9;
   animation: pixel-bounce 0.7s steps(2) infinite;
 }
+.page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 45dvh;
+  gap: 18px;
+  text-align: center;
+}
+.page-loading .loading-pixel {
+  font-size: 40px;
+}
 .error-banner,
 .waiting-banner {
   margin-bottom: 25px;
@@ -5666,7 +5696,8 @@ img {
     background: #fffef7;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    padding: 7px 6px max(9px, var(--safe-bottom, var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))));
+    padding: 7px 6px
+      max(9px, var(--safe-bottom, var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))));
     box-shadow: 0 -3px 0 #20211d09;
     min-height: 66px;
   }
@@ -5787,9 +5818,13 @@ img {
     font-size: 10px;
   }
   .main-wrap.page-wrap-chat {
-    min-height: calc(100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px)));
+    min-height: calc(
+      100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px))
+    );
     height: calc(100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px)));
-    max-height: calc(100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px)));
+    max-height: calc(
+      100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px))
+    );
     display: flex;
     flex-direction: column;
     overflow: hidden;

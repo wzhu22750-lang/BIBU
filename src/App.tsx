@@ -2,7 +2,7 @@ import { registerDeviceInstallation } from './lib/api'
 import { BibuNative } from './native'
 import { parseRoute } from './lib/routes'
 import { recoverPendingAccountDeletion } from './lib/accountDeletionRecovery'
-import { useEffect, useState, useCallback } from 'react'
+import { Suspense, lazy, useEffect, useState, useCallback } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
 import type { Session } from '@supabase/supabase-js'
@@ -29,14 +29,24 @@ import { AnimatePresence } from 'framer-motion'
 import { ToastContext, Button } from './components/ui'
 import { Icon } from './components/PixelArt'
 import { PingEffect } from './components/PingEffect'
-import { Home } from './pages/Home'
-import { Chat } from './pages/Chat'
-import { Events } from './pages/Events'
-import { Photos } from './pages/Photos'
-import { Focus } from './pages/Focus'
-import { Settings } from './pages/Settings'
-import { Wardrobe } from './pages/Wardrobe'
-import { Auth, Onboarding } from './pages/Auth'
+// 页面按路由懒加载：首屏只下载小窝所需代码，其余页面在首次切换时再取。
+const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
+const Chat = lazy(() => import('./pages/Chat').then((m) => ({ default: m.Chat })))
+const Events = lazy(() => import('./pages/Events').then((m) => ({ default: m.Events })))
+const Photos = lazy(() => import('./pages/Photos').then((m) => ({ default: m.Photos })))
+const Focus = lazy(() => import('./pages/Focus').then((m) => ({ default: m.Focus })))
+const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })))
+const Wardrobe = lazy(() => import('./pages/Wardrobe').then((m) => ({ default: m.Wardrobe })))
+const Auth = lazy(() => import('./pages/Auth').then((m) => ({ default: m.Auth })))
+const Onboarding = lazy(() => import('./pages/Auth').then((m) => ({ default: m.Onboarding })))
+function PageLoading({ screen = false }: { screen?: boolean }) {
+  return (
+    <div className={screen ? 'loading-screen' : 'page-loading'} role="status" aria-live="polite">
+      <span className="loading-pixel">♥</span>
+      {screen ? <h2>正在打开我们的小宇宙…</h2> : <span className="micro">LOADING…</span>}
+    </div>
+  )
+}
 function Workspace({
   session,
   demo,
@@ -100,7 +110,12 @@ function Workspace({
         </Button>
       </div>
     )
-  if (!controller.space.couple) return <Onboarding controller={controller} />
+  if (!controller.space.couple)
+    return (
+      <Suspense fallback={<PageLoading screen />}>
+        <Onboarding controller={controller} />
+      </Suspense>
+    )
   return (
     <>
       <Shell
@@ -134,28 +149,34 @@ function Workspace({
             <button onClick={() => navigate('settings')}>生成邀请码 →</button>
           </div>
         )}
-        {page === 'home' && (
-          <Home controller={controller} navigate={navigate} demo={demo} bibu={bibu} />
-        )}{' '}
-        {page === 'chat' && (
-          <Chat controller={controller} demo={demo} referenceId={route.referenceId} />
-        )}{' '}
-        {page === 'events' && <Events controller={controller} referenceId={route.referenceId} />}{' '}
-        {page === 'photos' && <Photos controller={controller} demo={demo} />}{' '}
-        {page === 'focus' && <Focus controller={controller} />}{' '}
-        {page === 'wardrobe' && (
-          <Wardrobe controller={controller} navigate={navigate} initialMode={route.wardrobeMode} />
-        )}{' '}
-        {page === 'settings' && (
-          <Settings
-            controller={controller}
-            navigate={navigate}
-            demo={demo}
-            exitDemo={exitDemo}
-            sound={sound}
-            setSound={setSound}
-          />
-        )}
+        <Suspense fallback={<PageLoading />}>
+          {page === 'home' && (
+            <Home controller={controller} navigate={navigate} demo={demo} bibu={bibu} />
+          )}{' '}
+          {page === 'chat' && (
+            <Chat controller={controller} demo={demo} referenceId={route.referenceId} />
+          )}{' '}
+          {page === 'events' && <Events controller={controller} referenceId={route.referenceId} />}{' '}
+          {page === 'photos' && <Photos controller={controller} demo={demo} />}{' '}
+          {page === 'focus' && <Focus controller={controller} />}{' '}
+          {page === 'wardrobe' && (
+            <Wardrobe
+              controller={controller}
+              navigate={navigate}
+              initialMode={route.wardrobeMode}
+            />
+          )}{' '}
+          {page === 'settings' && (
+            <Settings
+              controller={controller}
+              navigate={navigate}
+              demo={demo}
+              exitDemo={exitDemo}
+              sound={sound}
+              setSound={setSound}
+            />
+          )}
+        </Suspense>
       </Shell>
       {controller.ping && <PingEffect ping={controller.ping} onClose={controller.dismissPing} />}
     </>
@@ -405,7 +426,9 @@ export default function App() {
           exitDemo={() => setDemo(false)}
         />
       ) : (
-        <Auth enterDemo={() => setDemo(true)} />
+        <Suspense fallback={<PageLoading screen />}>
+          <Auth enterDemo={() => setDemo(true)} />
+        </Suspense>
       )}{' '}
       {toast && (
         <div
