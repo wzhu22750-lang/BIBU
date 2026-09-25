@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  buildMessagePush,
-  messagePreview,
-} from '../../supabase/functions/_shared/messagePush'
+import { buildMessagePush, messagePreview } from '../../supabase/functions/_shared/messagePush'
 const record = {
   id: '12345678-1234-4234-8234-123456789021',
   couple_id: '12345678-1234-4234-8234-123456789013',
@@ -33,4 +30,5 @@ describe('个推 message 透传载荷', () => {
   it('rejects invalid CID and message IDs', () => {
     expect(() => buildMessagePush(record, 'short')).toThrow('CID')
     expect(() => buildMessagePush({ ...record, id: 'bad' }, 't'.repeat(20))).toThrow('ID')
-  })})
+  })
+})

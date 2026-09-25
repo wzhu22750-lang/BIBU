@@ -182,7 +182,9 @@ export function PushRegistrationPanel({
                 <i className="pixel-status-square offline" /> 等待心跳 · 离线 (OFFLINE)
               </span>
             )}
-            <span className="telegram-meta-pill">个推 SDK v{diagnostics?.sdkVersion || '3.3.15'}</span>
+            <span className="telegram-meta-pill">
+              个推 SDK v{diagnostics?.sdkVersion || '3.3.15'}
+            </span>
           </div>
 
           {/* CID 条带 */}
@@ -201,14 +203,15 @@ export function PushRegistrationPanel({
           {/* 状态徽章条目 */}
           <div className="telegram-meta-pills">
             <span className="telegram-meta-pill">
-              机型: {diagnostics?.deviceModel ? `${diagnostics.deviceModel} (API ${diagnostics.androidVersion || '?'})` : 'Web / 本地环境'}
+              机型:{' '}
+              {diagnostics?.deviceModel
+                ? `${diagnostics.deviceModel} (API ${diagnostics.androidVersion || '?'})`
+                : 'Web / 本地环境'}
             </span>
             <span className="telegram-meta-pill">
               通知栏: {permission?.granted ? '已授权 ✓' : '未授权'}
             </span>
-            <span className="telegram-meta-pill">
-              伴侣链路: {registered ? '已绑定' : '未绑定'}
-            </span>
+            <span className="telegram-meta-pill">伴侣链路: {registered ? '已绑定' : '未绑定'}</span>
           </div>
 
           {/* 提示消息 */}

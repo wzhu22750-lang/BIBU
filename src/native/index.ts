@@ -202,8 +202,7 @@ export const BibuNative = {
             return { supported: true, reason: '系统通知权限尚未开启，未主动弹出权限请求' }
           permission = await plugin.requestNotificationPermission()
         }
-        if (!permission.granted)
-          return { supported: true, reason: 'Android 系统通知权限未开启' }
+        if (!permission.granted) return { supported: true, reason: 'Android 系统通知权限未开启' }
         // 通知渠道由原生 BibuNotifications.ensureChannels 统一创建（个推/提醒共用），
         // 这里不需要再建。CID 由原生个推 SDK 获取。
         const registration = await withTimeout(

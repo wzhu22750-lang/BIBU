@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  buildPingPush,
-  isUsablePushToken,
-} from '../../supabase/functions/_shared/pingPush'
+import { buildPingPush, isUsablePushToken } from '../../supabase/functions/_shared/pingPush'
 import { isInvalidCidError } from '../../supabase/functions/_shared/getui'
 const record = {
   id: '12345678-1234-4234-8234-123456789012',

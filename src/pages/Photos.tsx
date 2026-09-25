@@ -338,9 +338,15 @@ export function Photos({ controller, demo }: { controller: SpaceController; demo
               </Button>
             </div>
           </div>
-          {pages.busy && <p className="memory-pagination-msg" role="status">正在读取回忆与私有图片链接…</p>}
+          {pages.busy && (
+            <p className="memory-pagination-msg" role="status">
+              正在读取回忆与私有图片链接…
+            </p>
+          )}
           {pages.error && (
-            <p className="memory-pagination-msg error" role="alert">回忆读取失败：{pages.error}。可刷新重试，不会删除你的资料。</p>
+            <p className="memory-pagination-msg error" role="alert">
+              回忆读取失败：{pages.error}。可刷新重试，不会删除你的资料。
+            </p>
           )}
         </nav>
       )}

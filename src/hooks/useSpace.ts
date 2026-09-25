@@ -69,40 +69,43 @@ export function useSpace(
   const userId = session?.user.id
   const accessToken = session?.access_token
 
-  const syncWidget = useCallback((targetSpace: Space | null) => {
-    if (!targetSpace?.couple) return
-    try {
-      const now = new Date()
-      const days = targetSpace.couple.together_since
-        ? togetherDays(targetSpace.couple.together_since, now)
-        : 0
-      const events = upcomingEvents(targetSpace, now).map((e) => ({
-        name: e.title,
-        daysRemaining: daysUntil(e.target_at, e.yearly, now),
-        targetAt: e.target_at,
-        yearly: e.yearly,
-      }))
-      const memories = dailyMemories(targetSpace.photos, targetSpace.couple.id, now)
-      const photoUrls = memories
-        .map((p) => p.url)
-        .filter((u): u is string => typeof u === 'string' && u.length > 0)
-        .slice(0, 3)
-      const partnerName = targetSpace.partner?.name || '另一半'
+  const syncWidget = useCallback(
+    (targetSpace: Space | null) => {
+      if (!targetSpace?.couple) return
+      try {
+        const now = new Date()
+        const days = targetSpace.couple.together_since
+          ? togetherDays(targetSpace.couple.together_since, now)
+          : 0
+        const events = upcomingEvents(targetSpace, now).map((e) => ({
+          name: e.title,
+          daysRemaining: daysUntil(e.target_at, e.yearly, now),
+          targetAt: e.target_at,
+          yearly: e.yearly,
+        }))
+        const memories = dailyMemories(targetSpace.photos, targetSpace.couple.id, now)
+        const photoUrls = memories
+          .map((p) => p.url)
+          .filter((u): u is string => typeof u === 'string' && u.length > 0)
+          .slice(0, 3)
+        const partnerName = targetSpace.partner?.name || '另一半'
 
-      void BibuNative.widget.syncData({
-        days,
-        togetherSince: targetSpace.couple.together_since,
-        partnerName,
-        events,
-        photoUrls,
-        supabaseUrl: DEFAULT_URL,
-        anonKey: DEFAULT_KEY,
-        accessToken,
-      })
-    } catch {
-      // Widget sync errors should never crash or interrupt space loading
-    }
-  }, [accessToken])
+        void BibuNative.widget.syncData({
+          days,
+          togetherSince: targetSpace.couple.together_since,
+          partnerName,
+          events,
+          photoUrls,
+          supabaseUrl: DEFAULT_URL,
+          anonKey: DEFAULT_KEY,
+          accessToken,
+        })
+      } catch {
+        // Widget sync errors should never crash or interrupt space loading
+      }
+    },
+    [accessToken],
+  )
   const reload = useCallback(async (): Promise<boolean> => {
     if (demo || !userId) return false
     const current = ++version.current
