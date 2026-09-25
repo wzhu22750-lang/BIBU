@@ -4,7 +4,11 @@ import { InactiveOutbox } from '../components/InactiveOutbox'
 import { useEffect, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { configured, db } from '../lib/supabase'
-import { describeWechatError, initiateWechatLogin } from '../lib/wechatAuth'
+import {
+  checkWechatLoginAvailable,
+  describeWechatError,
+  initiateWechatLogin,
+} from '../lib/wechatAuth'
 import { Button, useTask, useToast } from '../components/ui'
 import { Icon, PixelFlower, PixelPal } from '../components/PixelArt'
 import type { SpaceController } from '../hooks/useSpace'
@@ -135,8 +139,21 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
     [remember, setRemember] = useState(true),
     [otpCode, setOtpCode] = useState(''),
     [otpCountdown, setOtpCountdown] = useState(0),
+    [wechatReady, setWechatReady] = useState(false),
     { busy, run } = useTask(),
     toast = useToast()
+
+  // 微信服务未部署时（线上函数缺失）不展示入口，避免点击即报错。
+  useEffect(() => {
+    if (!configured || isNativePlatform) return
+    let active = true
+    void checkWechatLoginAvailable().then((ready) => {
+      if (active) setWechatReady(ready)
+    })
+    return () => {
+      active = false
+    }
+  }, [])
 
   // 注册验证码 60 秒倒计时：每秒递减，到 0 后自动清理
   useEffect(() => {
@@ -346,7 +363,7 @@ export function Auth({ enterDemo }: { enterDemo: () => void }) {
         </p>
         {configured ? (
           <div>
-            {!isNativePlatform && regStep !== 'verify' && (
+            {wechatReady && regStep !== 'verify' && (
               <>
                 <Button
                   tone="green"

@@ -178,6 +178,26 @@ function getApiEndpoint(path: string): string {
   return `/api/wechat${cleanPath}`
 }
 
+// 探测微信服务是否已上线：入口只在服务端函数真实存在时展示。
+// 函数未部署时网关返回 404，本地开发或站点兜底会返回 HTML 页面，
+// 两种情况都视为未开放；服务端上线后无需改代码即自动恢复入口。
+let wechatAvailability: Promise<boolean> | null = null
+export function checkWechatLoginAvailable(): Promise<boolean> {
+  if (!wechatAvailability) {
+    wechatAvailability = fetch(getApiEndpoint('/status'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: '{}',
+    })
+      .then((res) => {
+        if (res.status === 404) return false
+        return (res.headers.get('content-type') || '').includes('application/json')
+      })
+      .catch(() => false)
+  }
+  return wechatAvailability
+}
+
 // 发起微信登录
 export async function initiateWechatLogin(): Promise<{ url: string }> {
   const redirectTo =
