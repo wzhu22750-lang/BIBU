@@ -23,6 +23,17 @@ createRoot(document.getElementById('root')!).render(
 import './home.css'
 import './fontscale.css'
 
+// 新版发布后旧分片会被清理，按需加载的页面会取不到文件。
+// 此时整页刷新一次取回最新入口；60 秒内只重试一次，避免弱网下反复刷新。
+const CHUNK_RELOAD_KEY = 'bibu-chunk-reload'
+window.addEventListener('vite:preloadError', (event) => {
+  const last = Number(sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0)
+  if (Date.now() - last < 60_000) return
+  event.preventDefault()
+  sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now()))
+  window.location.reload()
+})
+
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     void navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((error) => {
