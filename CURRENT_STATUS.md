@@ -1,6 +1,6 @@
 # BIBU！当前项目状态
 
-> 更新日期：2026 年 9 月 9 日 · 分支：`main`
+> 更新日期：2026 年 9 月 25 日 · 分支：`main`
 >
 > 迁移与线上环境的最新状态以 [DATABASE.md](DATABASE.md) 为准，本文件不重复维护。
 
@@ -11,7 +11,8 @@ BIBU！已完成前端全功能、数据持久化与离线缓存、Supabase 后�
 | 模块                         | 完成度 | 状态说明                                                                                       |
 | ---------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
 | **Web 前端功能**             | 100%   | 六大功能页（小窝、悄悄话、值得期待、照片墙、专注陪伴、萌宠衣橱）与设置、登录、绑定均可正常运行 |
-| **离线与缓存能力**           | 95%    | IndexedDB 照片持久缓存 (LRU/64MB)、消息/事件/照片待发队列、离线快照恢复均已就绪                |
+| **账号体系与微信登录**       | 待上线 | 代码与数据库迁移已就绪，线上函数与微信凭据待部署；未部署时前端自动隐藏入口（见发布阻塞项 5）   |
+| **离线与缓存能力**           | 98%    | IndexedDB 照片缓存 (LRU/64MB)、三套待发队列、离线快照、Service Worker 预缓存全部分片           |
 | **Supabase 数据库与 RLS**    | 95%    | 初始迁移 + 增量迁移全部就绪（迁移清单与线上状态见 DATABASE.md）；线上已应用加固与行锁保护      |
 | **Edge Functions 服务端**    | 90%    | `send-message-push`、`send-ping-push`、`delete-account` 已部署线上并通过鉴权断言               |
 | **Android 原生能力层**       | 85%    | 通知、非精确定时提醒 (AlarmManager)、UsageStats 使用量、Deep Link 回调、本地构建通过           |
@@ -43,11 +44,17 @@ BIBU！已完成前端全功能、数据持久化与离线缓存、Supabase 后�
 - **关系封存**：支持解除关系并封存空间，撤销双人成员关系并封闭空间，历史数据保留但双方均不可再访问。
 - **账户注销恢复**：提供注销前本地 marker 机制与服务端 `delete-account` Edge Function（自动清理本人照片文件、匿名化共同记录、删除 Auth 用户），防止网络中断假成功。
 
+### 4. 账号体系扩展（微信）
+
+- **微信快捷登录与身份绑定**：`supabase/functions/wechat-auth` 独立服务端直接对接微信开放平台，服务端换取 `openid` / `unionid` 并维护与 `bibu_user_id` 的唯一映射，签发一次性 ticket（5 分钟）供客户端换取标准 Supabase 会话，RLS / Storage / Realtime / 注销流程原生生效。
+- **不依赖 Supabase Custom OAuth Provider**：无需 GoTrue OAuth Provider 或付费配置，微信 secret 只存在于服务端。
+- **上线状态**：相关迁移（`202609220001_wechat_oauth_bridge`、`202609230001_wechat_auth_independent`）已应用到线上库；Edge Function `wechat-auth` 与 `WECHAT_*` 凭据尚未部署，前端会探测接口可用性并自动隐藏「微信快捷登录」入口（详见发布阻塞项 5 与 [docs/wechat-web-login.md](docs/wechat-web-login.md)）。
+
 ---
 
 ## 三、当前已知问题（已知且接受）
 
-1. **Vite 生产构建 Chunk 提示**：由于全量打包包含 pixelarticons 与预置字体资源，`index.js` 单包大于 500kB。功能与加载正常，后续可按路由代码分割（code-splitting）。
+1. **首访后台预缓存**：页面已按路由懒加载（首屏只下载小窝所需分片，主包 1.1MB → ~310kB），Service Worker 会在首次访问后于后台预缓存全部分片与样式（约 400KB gzip），用于换取断网后进入任意页面；弱网下首访流量略高于纯按需加载。
 2. **Android 编译警告**：Kotlin 编译时存在 `VIBRATOR_SERVICE` 和 `unsafeCheckOpNoThrow` 等已过时系统 API 警告，因需向前兼容老旧 Android 版本刻意保留。
 3. **部分小动物同色系装扮对比度偏低**：小鸭穿嫩黄渔夫帽、白羊戴白厨师帽等像素艺术配色对比度偏低，有黑色硬轮廓描边兜底。
 
@@ -55,9 +62,9 @@ BIBU！已完成前端全功能、数据持久化与离线缓存、Supabase 后�
 
 ## 四、尚未完成事项（非阻塞）
 
-1. **桌面 Web 端 Service Worker 缓存策略**：当前仅注册基础 sw，未配置复杂预缓存策略。
-2. **多语言 / 国际化扩展**：目前原生文本与 UI 仅面向中文。
-3. **头像相册自由上传**：目前统一采用 16 款复古像素小动物形象与衣橱定制，尚未提供自定义用户相片作为头像。
+1. **多语言 / 国际化扩展**：目前原生文本与 UI 仅面向中文。
+2. **头像相册自由上传**：目前统一采用 16 款复古像素小动物形象与衣橱定制，尚未提供自定义用户相片作为头像。
+3. **页面切换过渡**：切换页面时若对应分片尚未缓存，会短暂显示像素心加载态（正常联网下分片已由 Service Worker 预缓存，几乎不可见）。
 
 ---
 
@@ -69,3 +76,4 @@ BIBU！已完成前端全功能、数据持久化与离线缓存、Supabase 后�
 2. **个推凭据配置**：在 `.env.release` 与 Supabase Edge Function Secrets 中配置 `GETUI_APP_ID`、`GETUI_APP_KEY`、`GETUI_MASTER_SECRET`。
 3. **真实物理设备个推送达验收**：在两台真实物理 Android 设备上完成前台、后台、锁屏、进程被杀后的 Push 唤醒与点击跳转验收。
 4. **线上 Supabase 触发器端到端核验**：确保远程 Database Webhook 对 `public.pings` 与 `public.messages` 的 AFTER INSERT 触发器稳定调用 Edge Function。
+5. **微信登录服务上线**：线上尚未部署 Edge Function `wechat-auth`，也未配置 `WECHAT_APP_ID` / `WECHAT_APP_SECRET` / `WECHAT_MP_APP_ID` 等 Secrets（数据库侧 wechat 表与函数已就绪）。前端已按接口探测自动隐藏「微信快捷登录」入口（`checkWechatLoginAvailable`），函数部署后无需改代码即恢复展示；上线前仍需在微信开放平台完成回调域名配置并做端到端验收。

@@ -82,7 +82,7 @@ npm run android:release:build
 │   ├── styles.css            # 全局像素设计系统样式与通用 Token
 │   └── expectations.css      # 纪念日、彩色图标与情绪底栏样式
 ├── supabase/                 # Supabase 数据库迁移、Edge Functions 与权限测试
-│   ├── functions/            # Deno Edge Functions（消息推送、Ping 推送、账户注销）
+│   ├── functions/            # Deno Edge Functions（消息推送、Ping 推送、账户注销、微信登录服务 wechat-auth）
 │   ├── migrations/           # 顺序 SQL 增量迁移脚本
 │   └── tests/                # 基于 PGlite 的本地 RLS 与 RPC 自动化测试套件
 ├── capacitor.config.json     # Capacitor 跨平台核心配置
@@ -92,7 +92,16 @@ npm run android:release:build
 
 ---
 
-## 四、本地开发流程
+## 四、前端分包与离线缓存
+
+- **路由级懒加载**：`src/App.tsx` 中的六个功能页与 `Auth` / `Onboarding` 均通过 `React.lazy` 按需加载，并用 `Suspense` 包裹（页内加载态为 `.page-loading`）。新增页面时保持同样的懒加载写法，避免首屏主包重新膨胀。
+- **第三方库分包**：`vite.config.ts` 的 `output.codeSplitting.groups` 将 `node_modules` 按包拆分为 `vendor-*` 分片，改动业务代码不会连带刷新依赖缓存。
+- **Service Worker 预缓存**：`public/sw.js` 在 `install` 阶段读取 `/precache-manifest.json` 预缓存壳层与全部分片；该清单由 `vite.config.ts` 的 `serviceWorkerPrecache` 插件在构建后写入 `dist/`，同时把 `__BIBU_RELEASE__` 占位符替换为当次 commit。**不要手工改动 `sw.js` 里的 `RELEASE`**，发版时它会自动变化，从而触发 SW 更新与旧缓存清理。
+- **分片失效兜底**：新版本发布后旧分片会被清理，`src/main.tsx` 监听 `vite:preloadError` 并在 60 秒内最多整页刷新一次，避免用户看到空白页。
+
+---
+
+## 五、本地开发流程
 
 ### 1. 本地演示模式 (Demo Mode)
 
@@ -112,7 +121,7 @@ npm run android:release:build
 
 ---
 
-## 五、Android 原生开发流程
+## 六、Android 原生开发流程
 
 1. **首次配置 SDK 路径**：
    在 `android/` 目录下创建 `local.properties`（已被 Git 忽略）：
@@ -129,7 +138,7 @@ npm run android:release:build
 
 ---
 
-## 六、分支与提交规范
+## 七、分支与提交规范
 
 1. **主干分支**：`main` 为核心稳定分支，所有发版与构建基于该分支。
 2. **特性与修复分支**：基于 `main` 分支检出，命名建议为 `feat/feature-name` 或 `fix/bug-name`。

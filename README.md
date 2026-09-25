@@ -55,13 +55,13 @@
 
 ## 🧱 核心技术栈
 
-| 部分 | 技术栈                                                                                    |
-| -------- | ------------------------------------------------------------------------------------------- |
-| 前端     | React 19 + TypeScript + Vite 8                                                              |
-| 后端     | Supabase（PostgreSQL + RLS + Storage + Realtime + Deno Edge Functions）                     |
-| 手机端   | Capacitor 8 + 自写 Kotlin 原生插件（通知 / AlarmManager 提醒 / UsageStats / 深链接 / 震动） |
-| 离线     | IndexedDB 图片 LRU 缓存、消息/事件/照片三套待发队列、24h 离线快照                           |
-| 质量     | Vitest + PGlite 跑真实 PostgreSQL 的 RLS/RPC 测试（400+ 用例）                              |
+| 部分   | 技术栈                                                                                                               |
+| ------ | -------------------------------------------------------------------------------------------------------------------- |
+| 前端   | React 19 + TypeScript + Vite 8                                                                                       |
+| 后端   | Supabase（PostgreSQL + RLS + Storage + Realtime + Deno Edge Functions）                                              |
+| 手机端 | Capacitor 8 + 自写 Kotlin 原生插件（通知 / AlarmManager 提醒 / UsageStats / 深链接 / 震动）                          |
+| 离线   | IndexedDB 图片 LRU 缓存、消息/事件/照片三套待发队列、24h 离线快照、Service Worker 分片预缓存（断网也能打开任一页面） |
+| 质量   | Vitest + PGlite 跑真实 PostgreSQL 的 RLS/RPC 测试（400+ 用例）                                                       |
 
 几个我比较较真的地方：
 

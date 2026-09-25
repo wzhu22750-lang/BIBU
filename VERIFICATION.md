@@ -90,3 +90,6 @@ npm run android:release:check
 - [ ] **Vercel 生产部署**：生产域名配置 HTTPS 且正确反向代理，无公开暴露私密 Service Role 密钥。
 - [ ] **Supabase Webhook 端到端打通**：`messages` 与 `pings` 插入记录时，触发器成功调用 Edge Function。
 - [ ] **个推远程真实送达**：在已配置个推的物理设备间完成后台远程推送真实送达验收。
+- [ ] **离线可用性**：联网打开一次后断开网络重新打开站点，入口页与六个功能页均可进入（Service Worker 预缓存生效）。
+- [ ] **版本更新清理**：发布新版本后再次访问，`caches.keys()` 中只保留当前版本缓存（旧 `bibo-shell-*` 已被清理），页面加载的是新分片。
+- [ ] **微信登录可用性**：确认线上 `POST /api/wechat/authorize` 返回授权跳转（非 404），且已完成微信开放平台回调域名与 `WECHAT_*` Secrets 配置。服务端未部署时，客户端应自动隐藏「微信快捷登录」入口（不展示入口即为正确表现）。
