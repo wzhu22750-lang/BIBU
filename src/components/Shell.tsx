@@ -35,7 +35,9 @@ export function Shell({
         <button className="brand" onClick={() => navigate('home')} aria-label="BIBU！首页">
           <span className="brand-word">
             BIBU<span>!</span>
-            <i>✳</i>
+            <i>
+              <Icon name="spark" size={20} />
+            </i>
           </span>
           <span className="brand-cn">哔 卟 哔 卟</span>
         </button>
@@ -78,6 +80,7 @@ export function Shell({
             </span>
           </div>
           <button
+            aria-current={page === 'settings' ? 'page' : undefined}
             className={`settings-nav ${page === 'settings' ? 'selected' : ''}`}
             onClick={() => navigate('settings')}
           >

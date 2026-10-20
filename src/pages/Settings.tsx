@@ -204,8 +204,8 @@ export function Settings({
                 autoComplete="off"
               />
             </label>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-              <Button tone="pink" type="submit" disabled={busy || closeText !== '解除绑定'}>
+            <div className="modal-actions-row">
+              <Button tone="danger" type="submit" disabled={busy || closeText !== '解除绑定'}>
                 {busy ? '正在解除…' : '确认解除并封存'}
               </Button>
               <Button tone="white" type="button" disabled={busy} onClick={() => setClosing(false)}>

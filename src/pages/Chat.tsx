@@ -201,7 +201,11 @@ export function Chat({
           id={referenceId}
         />
       )}
-      <section className="chat-window">
+      <section className="chat-window" aria-label="悄悄话">
+        <header className="chat-page-heading">
+          <h1>悄悄话</h1>
+          <span>和{space.partner?.name || '另一位玩家'}的日常</span>
+        </header>
         <div
           ref={scroll}
           onScroll={() => {

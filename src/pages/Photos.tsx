@@ -104,7 +104,7 @@ export function PhotoViewer({
               autoComplete="off"
             />
           </label>
-          <Button tone="pink" type="submit" disabled={busy || confirmation !== '删除'}>
+          <Button tone="danger" type="submit" disabled={busy || confirmation !== '删除'}>
             {busy ? '正在删除…' : '确认永久删除回忆'}
           </Button>
           <Button
@@ -180,7 +180,7 @@ export function PhotoViewer({
             </div>
           )}
           {controller?.space?.me.id === photo.uploaded_by && (
-            <Button tone="pink" onClick={() => setDeleting(true)}>
+            <Button tone="danger" onClick={() => setDeleting(true)}>
               删除这份回忆
             </Button>
           )}

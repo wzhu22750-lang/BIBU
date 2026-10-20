@@ -26,7 +26,8 @@ describe('DailyTask UI components', () => {
         demo={true}
       />,
     )
-    expect(html).toContain('TODAY&#x27;S TASK')
+    expect(html).toContain('今日小任务')
+    expect(html).toContain('aria-busy="true"')
     expect(html).toContain('正在准备今天的专属任务')
   })
 

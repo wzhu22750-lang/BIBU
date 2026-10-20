@@ -16,7 +16,7 @@ export function AccountDeletion({
   if (demo) return null
   return (
     <>
-      <Button tone="pink" disabled={busy} onClick={() => setOpen(true)}>
+      <Button tone="danger" disabled={busy} onClick={() => setOpen(true)}>
         永久注销账号
       </Button>
       {open && (
@@ -61,7 +61,7 @@ export function AccountDeletion({
                 autoComplete="off"
               />
             </label>
-            <Button tone="pink" type="submit" disabled={busy || confirmation !== '注销账号'}>
+            <Button tone="danger" type="submit" disabled={busy || confirmation !== '注销账号'}>
               {busy ? '正在注销…' : '确认永久注销'}
             </Button>
             <Button

@@ -1,0 +1,1324 @@
+/* Shared hierarchy layer. Loaded after page and font-scale styles.
+   L1: page title / hero; L2: action; L3: content; L4: metadata.
+   Keep the existing blue/pink palette, SVG art and pixel geometry. */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --text-body: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --text-display: 'Fusion Pixel', var(--text-body);
+  --text-secondary: #555d59;
+  --border-quiet: #c7ccc5;
+  --shadow-action: 2px 2px 0 var(--ink);
+}
+/* Content remains scalable; pixel display type is reserved for short headings. */
+body {
+  font-family: var(--text-body);
+}
+h1,
+h2,
+h3,
+.brand,
+.nav-item,
+.dock-item,
+.bibu-copy,
+.hero-label {
+  font-family: var(--text-display);
+}
+h1,
+h2,
+h3 {
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+button,
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+button {
+  overflow-wrap: anywhere;
+}
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.form-stack input:focus-visible,
+.form-stack textarea:focus-visible {
+  outline: 2px solid #1663e6;
+  outline-offset: 3px;
+}
+.page-heading {
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  align-items: flex-start;
+}
+.page-heading .heading-main {
+  min-width: 0;
+  flex: 1 1 220px;
+}
+.page-heading h1 {
+  font-size: clamp(24px, 2.4vw, 32px);
+}
+.page-heading p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 65ch;
+}
+.eyebrow {
+  margin-bottom: var(--space-2);
+  color: var(--text-secondary);
+}
+.heading-title-row {
+  gap: var(--space-2);
+}
+.heading-edit-btn {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  min-height: 44px;
+}
+.button {
+  min-height: 44px;
+  padding: 10px 16px;
+  gap: var(--space-2);
+}
+.button.tone-white {
+  box-shadow: none;
+  border-color: #858c83;
+}
+.icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.text-button,
+.history-trigger-link {
+  min-height: 44px;
+  white-space: normal;
+  font-size: 12px;
+}
+.button:disabled {
+  box-shadow: none;
+}
+.panel {
+  border: 1px solid var(--border-quiet);
+  box-shadow: none;
+}
+.panel-header {
+  padding: 12px 16px;
+  flex-wrap: wrap;
+}
+.panel-header h2,
+.home-section-title h2 {
+  font-size: 18px;
+}
+.panel-heading-copy {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+.panel-heading-copy > .micro {
+  font-size: 6px;
+}
+.panel-header .text-button {
+  font-size: 12px;
+}
+.empty {
+  padding: 24px 16px;
+}
+.empty p,
+.form-note,
+.consent-note p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.modal {
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 32px);
+  overscroll-behavior: contain;
+}
+.modal-header {
+  background: #e3f5fc;
+  padding: 8px 16px;
+}
+.modal-header h2 {
+  min-width: 0;
+  font-size: 20px;
+}
+.modal-header .icon-button {
+  flex-shrink: 0;
+}
+.form-stack {
+  padding: 20px;
+  gap: 20px;
+}
+.form-stack label:not(.check-label) {
+  font-size: 14px;
+  gap: 8px;
+}
+.form-stack input,
+.form-stack textarea {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.modal-actions-row {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.modal-actions-row .button {
+  flex: 1 1 120px;
+}
+.modal-toast {
+  overflow-wrap: anywhere;
+}
+/* Navigation: one selected destination; secondary English stays quiet. */
+.nav-item small {
+  opacity: 0.65;
+}
+.nav-item:not(.active) {
+  box-shadow: none;
+}
+.settings-nav.selected {
+  background: #e3f5fc;
+}
+.topbar {
+  min-height: 60px;
+  padding-block: 8px;
+}
+.topbar-right {
+  min-width: 0;
+  flex-shrink: 1;
+}
+.connection-tag {
+  min-height: 36px;
+  font-size: 11px;
+}
+.profile-button {
+  min-height: 44px;
+  min-width: 44px;
+}
+.profile-button b {
+  max-width: 16ch;
+  overflow-wrap: anywhere;
+}
+.main-footer {
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+/* Home: the blue shared-day card anchors the page, pink marks interaction. */
+.page-home .page-heading {
+  margin-bottom: 16px;
+}
+.page-home .page-heading h1 {
+  font-size: clamp(20px, 2vw, 26px);
+}
+.page-home .eyebrow {
+  display: none;
+}
+.today-label {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--text-body);
+  font-size: 12px;
+  padding: 0;
+  align-self: center;
+}
+.hero-grid {
+  gap: 20px;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+.together-content {
+  gap: 12px;
+  overflow: visible;
+  padding: 22px 20px;
+}
+.together-text {
+  min-width: 0;
+}
+.day-counter {
+  font-variant-numeric: tabular-nums;
+  flex-wrap: wrap;
+}
+.day-counter strong {
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  line-height: 1.2;
+}
+.since-label {
+  display: block;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.pal-name > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.together-footer {
+  flex-wrap: wrap;
+  font-size: 10px;
+}
+.together-footer > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.hero-flower {
+  opacity: 0.65;
+}
+.bibu-card {
+  background: #ffe1f4;
+  box-shadow: none;
+}
+.bibu-inner {
+  padding: 16px;
+  gap: 12px;
+}
+.bibu-copy {
+  min-width: 0;
+}
+.bibu-copy h2 {
+  font-size: 22px;
+  letter-spacing: 0;
+}
+.bibu-copy p {
+  font-family: var(--text-body);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.bibu-button {
+  width: 92px;
+  height: auto;
+  min-height: 92px;
+  padding: 8px;
+  gap: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transform: rotate(-3deg);
+}
+.bibu-button strong {
+  font-size: 14px;
+}
+.bibu-button .pixel-icon {
+  width: 24px;
+  height: 24px;
+}
+.bibu-button small {
+  font-size: 11px;
+  -webkit-text-stroke: 0;
+}
+.ping-choices {
+  padding: 0 16px 12px;
+  gap: 6px;
+}
+.ping-choices button {
+  font-family: var(--text-body);
+  font-size: 11px;
+  font-weight: 650;
+  border: 1px solid #a87b99;
+  box-shadow: none;
+  -webkit-text-stroke: 0;
+}
+.ping-choices button[aria-pressed='true'] {
+  border: 2px solid var(--ink);
+  background: var(--pink);
+}
+.bibu-bottom {
+  font-size: 10px;
+  border-top: 1px solid #d9afcc;
+  gap: 8px;
+}
+/* Task summary and progress share a row on wide screens; natural flow on phones. */
+.daily-task-card {
+  margin-top: 20px;
+  box-shadow: none;
+  overflow: visible;
+}
+.daily-task-card .card-window-bar {
+  height: auto;
+  min-height: 44px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-quiet);
+  background: #edf7fb;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.daily-task-card .card-window-bar > .micro {
+  flex-wrap: wrap;
+  font-family: var(--text-body);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.task-section-label {
+  font-family: var(--text-display);
+  color: var(--ink);
+  font-size: 17px;
+}
+.daily-task-content {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(220px, 1fr);
+  column-gap: 24px;
+}
+.daily-task-header-row,
+.daily-task-summary {
+  grid-column: 1;
+}
+.daily-task-header-row {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.daily-task-badge {
+  background: transparent !important;
+  border: 0;
+  padding: 0;
+  color: var(--text-secondary);
+}
+.streak-pill {
+  background: transparent;
+  border: 0;
+  font-family: var(--text-body);
+}
+.daily-task-title {
+  font-family: var(--text-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.daily-task-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.daily-task-players-status {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: start;
+  background: transparent;
+  border: 0;
+  padding: 4px 0 12px;
+  margin: 0;
+}
+.player-status-col {
+  min-width: 0;
+}
+.status-label {
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.player-status-col.waiting .status-mark {
+  color: var(--text-secondary);
+}
+.player-status-col.done .status-mark {
+  color: #08764f;
+}
+.daily-task-actions {
+  grid-column: 2;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.task-progress {
+  font-size: 12px;
+  line-height: 1.6;
+  min-width: 0;
+}
+.task-progress small {
+  display: block;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.daily-task-action-btn {
+  width: auto;
+  flex-shrink: 0;
+  background: var(--pink);
+  box-shadow: var(--shadow-action);
+}
+.daily-task-action-btn.tone-white {
+  background: var(--paper);
+}
+.both-completed-banner {
+  grid-column: 1;
+  margin: 12px 0 0;
+  border: 0;
+  box-shadow: none;
+}
+.task-state-copy {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  padding: 8px 0;
+}
+.daily-task-card[data-completed='true'] {
+  border-color: #709d89;
+}
+.home-section-title {
+  margin: 28px 0 12px;
+  flex-wrap: wrap;
+}
+.home-section-title h2 {
+  flex-wrap: wrap;
+}
+.home-events .event-card {
+  box-shadow: none;
+  border: 1px solid var(--border-quiet);
+  background: var(--paper);
+}
+.home-events .event-card:first-child {
+  border: 2px solid var(--ink);
+  background: #fff5d8;
+}
+.home-events .event-card h3 {
+  margin: 10px 0 12px;
+}
+.home-events .event-days strong {
+  font-size: 20px;
+}
+.home-events .event-date {
+  white-space: normal;
+}
+.home-events .event-bottom {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+.add-event-card {
+  background: transparent;
+}
+.home-lower {
+  margin-top: 24px;
+  gap: 20px;
+}
+.chat-preview .panel-header {
+  background: #fff2fa;
+}
+.chat-preview-content > div {
+  min-width: 0;
+}
+.message-meta {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chat-preview-content p {
+  overflow-wrap: anywhere;
+}
+.focus-preview {
+  background: #e4f6ee;
+  box-shadow: none;
+  border: 1px solid var(--border-quiet);
+}
+.focus-preview > div {
+  min-width: 0;
+}
+.ping-history {
+  margin-top: 24px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border-quiet);
+}
+.ping-history li {
+  border-bottom-color: var(--border-quiet);
+}
+.ping-history small {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.home-signoff {
+  margin-top: 24px;
+}
+/* Page-specific content, using the same restrained containers. */
+.events-grid .event-card,
+.retro-cartridge {
+  box-shadow: var(--shadow-action);
+}
+.page-photos .photo-caption > strong {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.memory-filter {
+  gap: 12px;
+}
+.memory-order-toggle > button {
+  min-height: 44px;
+  font-size: 12px;
+  white-space: normal;
+}
+.focus-main {
+  border: var(--line);
+  box-shadow: var(--shadow);
+}
+.focus-support {
+  margin-top: 24px;
+  display: grid;
+  gap: 16px;
+}
+.consent-note {
+  background: transparent;
+  box-shadow: none;
+}
+.page-settings .retro-window-bar {
+  min-height: 44px;
+  height: auto;
+}
+.page-settings .retro-window-bar .micro {
+  font-family: var(--text-body);
+  font-size: 13px;
+}
+.page-settings .retro-window-bar .dots {
+  display: none;
+}
+.page-settings .retro-cartridge + .retro-cartridge {
+  margin-top: 24px;
+}
+.page-settings .form-note {
+  font-size: 12px;
+}
+.hud-tool-btn,
+.hud-save-btn,
+.hud-deploy-btn,
+.wardrobe-exit-btn {
+  min-height: 44px;
+  font-size: 12px;
+}
+.hud-actions-cluster,
+.hud-pet-identity {
+  flex-wrap: wrap;
+}
+.hud-save-btn.clean {
+  box-shadow: none;
+}
+.split-sticky-stage {
+  padding: 12px;
+}
+.chat-start-label,
+.message-author,
+.message-meta time {
+  color: var(--text-secondary);
+}
+.message-bubble {
+  font-family: var(--text-body);
+  line-height: 1.65;
+}
+@media (max-width: 1020px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .main-wrap:not(.page-wrap-chat) {
+    padding-bottom: calc(var(--dock-actual-height, 78px) + var(--safe-bottom) + 16px);
+  }
+  .main-wrap > main {
+    padding: 20px 16px 0;
+  }
+  .page-heading > div {
+    min-width: 0;
+  }
+  .page-heading > .button {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  .topbar {
+    padding-inline: max(16px, var(--safe-left)) max(16px, var(--safe-right));
+  }
+  .topbar-caption {
+    font-size: 18px;
+  }
+  .page-home .page-heading {
+    gap: 4px;
+  }
+  .page-home .page-heading h1 {
+    font-size: 20px;
+  }
+  .page-home .page-heading p {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .page-home .today-label {
+    width: 100%;
+    font-size: 11px;
+  }
+  .hero-grid {
+    gap: 14px;
+  }
+  .together-content {
+    min-height: 150px;
+    padding: 16px 14px;
+  }
+  .day-counter {
+    margin: 12px 0;
+    gap: 8px;
+  }
+  .day-counter strong {
+    font-size: 42px;
+  }
+  .hero-pals {
+    width: 108px;
+  }
+  .pal-ground .pixel-pal {
+    width: 53px;
+  }
+  .love-bubble {
+    left: 35px;
+  }
+  .hero-flower {
+    display: none;
+  }
+  .together-footer .micro {
+    display: none;
+  }
+  .bibu-inner {
+    padding: 12px 14px;
+  }
+  .bibu-button {
+    min-height: 72px;
+    width: 86px;
+    gap: 4px;
+  }
+  .bibu-button .pixel-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .bibu-copy h2 {
+    font-size: 20px;
+  }
+  .ping-choices {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 0 14px 10px;
+  }
+  .bibu-bottom {
+    padding: 6px 14px;
+  }
+  .daily-task-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 14px;
+  }
+  .daily-task-players-status {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 14px;
+    justify-content: flex-start;
+  }
+  .player-status-col {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .daily-task-actions {
+    grid-column: 1;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .daily-task-actions .daily-task-action-btn {
+    width: auto;
+    flex: 1 1 100px;
+  }
+  .task-progress {
+    flex: 1 1 110px;
+  }
+  .home-lower {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-photos {
+    gap: 10px;
+    padding: 16px 12px;
+  }
+  .home-photos .photo-card {
+    transform: none;
+  }
+  .home-section-title h2 {
+    font-size: 18px;
+  }
+  .home-section-title .text-button {
+    font-size: 12px;
+  }
+  .bottom-nav.bibo-dock > .dock-item > span:last-child {
+    font-family: var(--text-body);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: normal;
+  }
+  .bottom-nav.bibo-dock > .dock-item:not(.active) .dock-icon {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .bottom-nav.bibo-dock > .dock-item.active {
+    background: #e4f5fb;
+  }
+  .bottom-nav.bibo-dock > .dock-item {
+    min-width: 0;
+    height: auto;
+    min-height: 54px;
+  }
+  .panel-header h2 {
+    font-size: 18px;
+  }
+  .form-stack {
+    padding: 16px;
+  }
+}
+@media (max-width: 360px) {
+  .home-events {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-events .event-card {
+    min-height: auto;
+  }
+  .add-event-card {
+    flex-direction: row;
+    min-height: 52px;
+  }
+  .home-photos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .together-content {
+    flex-wrap: wrap;
+  }
+}
+/* Large text / short screens must scroll, never trap controls behind sticky art. */
+html[data-fs-big] .together-content {
+  flex-wrap: wrap;
+}
+html[data-fs-big] .daily-task-content {
+  grid-template-columns: minmax(0, 1fr);
+}
+html[data-fs-big] .daily-task-players-status {
+  grid-column: 1;
+  grid-row: auto;
+  margin-top: 12px;
+}
+html[data-fs-big] .daily-task-actions {
+  grid-column: 1;
+  flex-wrap: wrap;
+}
+html[data-fs-big] .split-sticky-stage {
+  position: static;
+}
+html[data-fs-big] .home-photos {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (max-height: 600px) {
+  .split-sticky-stage {
+    position: static;
+  }
+  .modal {
+    max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 16px);
+  }
+  .modal-header {
+    position: relative;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .celebration-particles {
+    display: none;
+  }
+  .bibu-button,
+  .bibu-button:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Auth uses an inline checkbox label inside the shared form. */
+.form-stack label.auth-remember {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.bibu-button strong {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+.wardrobe-tab-btn,
+.wardrobe-tool-btn,
+.ribbon-char-pill {
+  min-height: 44px;
+}
+.bottom-nav.bibo-dock > .dock-item:focus-visible {
+  outline: 3px solid #1663e6;
+  outline-offset: -3px;
+}
+.bottom-nav.bibo-dock > .dock-item,
+.bottom-nav.bibo-dock > .dock-item > span:last-child {
+  overflow: visible;
+}
+.bottom-nav.bibo-dock > .dock-item .dock-icon {
+  transition-property: transform, background-color, border-color, box-shadow;
+}
+
+.button.tone-danger {
+  background: #fff0f2;
+  color: #99253d;
+  border-color: #99253d;
+  box-shadow: 2px 2px 0 #99253d;
+}
+.button.tone-danger:hover:not(:disabled) {
+  background: #ffdce4;
+}
+.chat-page-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border-quiet);
+  flex-shrink: 0;
+  background: #fff2fa;
+}
+.chat-page-heading h1 {
+  font-size: 20px;
+}
+.chat-page-heading > span {
+  color: var(--text-secondary);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.card-window-bar {
+  height: auto;
+  min-height: 33px;
+  gap: 8px;
+}
+.card-window-bar > .micro {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.card-window-bar > div {
+  flex-shrink: 0;
+}
+html[data-fs-big] .together-content {
+  flex-direction: column;
+  align-items: stretch;
+}
+html[data-fs-big] .together-text {
+  width: 100%;
+}
+html[data-fs-big] .hero-pals {
+  align-self: center;
+  margin-top: 20px;
+}
+html[data-fs-big] .day-counter strong {
+  letter-spacing: -2px;
+}
+html[data-fs-big] .card-window-bar {
+  flex-wrap: wrap;
+}
+html[data-fs-big] .chat-page-heading {
+  padding-block: 6px;
+}
+
+/* Events retain category colors in the art, reserving strong depth for the next date. */
+.celebration-card {
+  background: var(--paper);
+  border: 1px solid var(--border-quiet);
+  box-shadow: none;
+  overflow: visible;
+}
+.celebration-list > .celebration-card:first-child {
+  background: var(--art-light);
+  border: var(--line);
+  box-shadow: var(--shadow-action);
+}
+.celebration-edit,
+.celebration-delete {
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  opacity: 1;
+}
+.celebration-delete:hover {
+  color: #99253d;
+  background: #fff0f2;
+}
+.celebration-info h3 {
+  font-size: 17px;
+}
+.category-chip {
+  background: transparent;
+  border-color: var(--border-quiet);
+}
+.celebration-count {
+  font-variant-numeric: tabular-nums;
+}
+.focus-timer-area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 65px;
+  padding: 20px;
+  gap: 12px;
+  justify-items: center;
+}
+.focus-status {
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+}
+.focus-timer-area > .micro {
+  grid-column: 1 / -1;
+}
+.focus-clock {
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 760px) {
+  .focus-timer-area {
+    padding: 16px;
+  }
+  .focus-clock {
+    font-size: 32px;
+  }
+  .focus-timer-area > .micro {
+    display: none;
+  }
+  .celebration-card {
+    grid-template-columns: 44px minmax(0, 1fr) auto 44px;
+    gap: 10px;
+  }
+  .celebration-art {
+    width: 44px;
+    height: 44px;
+  }
+  .celebration-actions {
+    grid-column: 4;
+    flex-direction: column;
+  }
+  .celebration-info h3 {
+    font-size: 16px;
+  }
+}
+html[data-fs-big] .celebration-card {
+  grid-template-columns: 44px minmax(0, 1fr);
+}
+html[data-fs-big] .celebration-count {
+  grid-column: 2;
+  align-items: flex-start;
+}
+html[data-fs-big] .celebration-actions {
+  grid-column: 2;
+  flex-direction: row;
+}
+html[data-fs-big] .focus-timer-area {
+  grid-template-columns: minmax(0, 1fr);
+}
+html[data-fs-big] .focus-clock {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+html[data-fs-big] .bibu-inner {
+  flex-wrap: wrap;
+}
+html[data-fs-big] .bibu-button {
+  width: max-content;
+  min-width: 100px;
+  padding: 12px 16px;
+}
+html[data-fs-big] .daily-task-actions .daily-task-action-btn {
+  flex: 1 1 100%;
+  width: 100%;
+}
+html[data-fs-big] .hero-pals {
+  width: min(100%, 220px);
+}
+html[data-fs-big] .pal-name > span {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Home reading order: shared life → today's actions → plans → memories.
+   One hero, one action surface; secondary content uses rows, not nested cards. */
+.main-wrap > main.page-home {
+  max-width: 1180px;
+}
+.home-overview .together-content {
+  min-height: 180px;
+  padding: 24px 28px;
+}
+.home-overview .hero-pals {
+  width: 180px;
+}
+.home-overview .pal-ground .pixel-pal {
+  width: 82px;
+}
+.home-overview .together-footer {
+  display: none;
+}
+.home-overview .hero-flower {
+  display: none;
+}
+.home-today {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
+  margin-top: 24px;
+  border: 1px solid var(--border-quiet);
+  background: var(--paper);
+}
+.home-today .bibu-card {
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--border-quiet);
+  padding: 16px;
+}
+.home-today .bibu-inner {
+  padding: 0;
+  flex: none;
+}
+.home-today .bibu-button {
+  background: var(--pink);
+  transform: none;
+}
+.home-today .bibu-bottom {
+  padding: 12px 0 0;
+  border: 0;
+  color: var(--text-secondary);
+}
+.home-mood-picker {
+  margin-top: 12px;
+}
+.home-mood-picker > summary,
+.home-history > summary {
+  min-height: 44px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.home-mood-picker > summary span,
+.home-history > summary span {
+  margin-left: 12px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.home-mood-picker .ping-choices {
+  padding: 8px 0 0;
+}
+.home-today .daily-task-card {
+  border: 0;
+  margin: 0;
+  background: transparent;
+}
+.home-today .daily-task-card .card-window-bar {
+  background: transparent;
+  border: 0;
+  padding: 4px 20px 0;
+}
+.home-today .daily-task-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 20px;
+}
+.home-today .daily-task-header-row {
+  display: flex;
+  margin-bottom: 6px;
+}
+.home-today .daily-task-players-status {
+  margin-top: 12px;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 0;
+}
+.home-today .player-status-col {
+  flex: none;
+  flex-direction: row;
+  gap: 8px;
+}
+.home-today .status-divider {
+  height: 18px;
+  width: 1px;
+}
+.home-today .daily-task-actions {
+  margin-top: 12px;
+}
+.home-today .daily-task-action-btn {
+  background: var(--yellow);
+}
+.home-today .daily-task-action-btn.tone-white {
+  background: var(--paper);
+}
+.home-plans {
+  margin-top: 32px;
+}
+.home-plans .home-section-title {
+  margin-top: 0;
+}
+.home-plans .home-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--border-quiet);
+}
+.home-plans .event-card,
+.home-plans .event-card:first-child {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  min-height: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border-quiet);
+  background: transparent;
+  box-shadow: none;
+}
+.home-plans .event-card h3 {
+  margin: 0;
+  font-size: 17px;
+}
+.home-plans .event-bottom {
+  gap: 16px;
+}
+.home-plans .event-days strong {
+  font-size: 20px;
+}
+.home-plans .add-event-card {
+  flex-direction: row;
+  justify-content: flex-start;
+  min-height: 44px;
+  border: 0;
+  padding: 10px 0;
+  font-size: 12px;
+}
+.home-plans .add-event-card br {
+  display: none;
+}
+.page-home .home-lower {
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  margin-top: 32px;
+  gap: 24px;
+}
+.page-home .home-lower .panel {
+  border: 0;
+  background: transparent;
+}
+.page-home .home-lower .panel-header {
+  padding: 0 0 12px;
+  background: transparent;
+}
+.page-home .home-photos {
+  padding: 16px 0;
+}
+.page-home .memories-footer {
+  padding-inline: 0;
+  border: 0;
+}
+.page-home .memories-footer .micro {
+  display: none;
+}
+.page-home .chat-preview-content {
+  padding: 16px 0;
+}
+.page-home .chat-reply {
+  margin: 0;
+  width: 100%;
+  min-height: 44px;
+}
+.page-home .focus-preview {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border-quiet);
+  padding: 16px 0;
+}
+.home-history {
+  border-top: 1px solid var(--border-quiet);
+  margin-top: 24px;
+}
+.home-history .ping-history {
+  margin-top: 0;
+  border: 0;
+}
+.page-home .home-signoff {
+  display: none;
+}
+@media (max-width: 760px) {
+  .home-overview .together-content {
+    min-height: 150px;
+    padding: 16px;
+  }
+  .home-overview .hero-pals {
+    width: 108px;
+  }
+  .home-overview .pal-ground .pixel-pal {
+    width: 53px;
+  }
+  .home-today {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 16px;
+  }
+  .home-today .bibu-card {
+    padding: 12px 14px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-quiet);
+  }
+  .home-today .bibu-button {
+    width: auto;
+    min-width: 100px;
+    min-height: 44px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  .home-today .bibu-button small {
+    display: none;
+  }
+  .home-today .bibu-copy h2 {
+    font-size: 18px;
+  }
+  .home-today .bibu-copy p {
+    display: none;
+  }
+  .home-mood-picker {
+    margin-top: 4px;
+  }
+  .home-today .bibu-bottom {
+    padding-top: 0;
+  }
+  .home-today .daily-task-card .card-window-bar {
+    padding: 4px 14px 0;
+  }
+  .home-today .daily-task-content {
+    padding: 0 14px 14px;
+  }
+  .home-today .daily-task-title {
+    font-size: 15px;
+  }
+  .home-plans .event-card,
+  .home-plans .event-card:first-child {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+  }
+  .home-plans .event-top {
+    grid-column: 1;
+  }
+  .home-plans .event-card h3 {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 16px;
+  }
+  .home-plans .event-bottom {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  .page-home .home-lower {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-home .home-side {
+    gap: 16px;
+  }
+}
+html[data-fs-big] .home-today {
+  grid-template-columns: minmax(0, 1fr);
+}
+html[data-fs-big] .home-today .bibu-card {
+  border-right: 0;
+  border-bottom: 1px solid var(--border-quiet);
+}
+html[data-fs-big] .home-overview .hero-pals {
+  width: min(100%, 220px);
+}
+html[data-fs-big] .home-today .daily-task-players-status {
+  flex-wrap: wrap;
+}

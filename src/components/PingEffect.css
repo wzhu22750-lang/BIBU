@@ -1,0 +1,192 @@
+/* Non-modal visitor: occupies only its own footprint, above the mobile dock. */
+.ping-visitor {
+  position: fixed;
+  z-index: 150;
+  right: max(20px, var(--safe-right, 0px));
+  bottom: max(24px, var(--safe-bottom, 0px));
+  width: min(340px, calc(100vw - 32px));
+  max-height: calc(100dvh - var(--safe-top, 0px) - 48px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+  color: var(--ink);
+  font-family: var(--text-body, system-ui, sans-serif);
+  animation: visitor-arrive 280ms steps(5, end) both;
+}
+.ping-visitor-arrival {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.ping-visitor-open {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: flex-end;
+  gap: 10px;
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  text-align: left;
+}
+.ping-visitor-pet {
+  flex: 0 0 64px;
+  transform-origin: bottom center;
+}
+.ping-visitor-pet .pixel-pal {
+  width: 64px;
+}
+.ping-visitor-bubble {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+  padding: 12px 14px;
+  background: #fff2fa;
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.ping-visitor-bubble::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  bottom: 16px;
+  width: 8px;
+  height: 8px;
+  background: #fff2fa;
+  border-left: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.ping-visitor-name {
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  color: #555d59;
+}
+.ping-visitor-bubble strong {
+  font-family: var(--text-display, inherit);
+  font-size: 20px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.ping-visitor-bubble small {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #555d59;
+}
+.ping-visitor-close {
+  flex: 0 0 44px;
+  min-height: 44px;
+  border: 1px solid #aeb5ac;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+}
+.ping-visitor-note {
+  margin: 12px 0 4px;
+  padding: 16px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.ping-visitor-note p {
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.ping-visitor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.ping-visitor-actions button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1 1 110px;
+  padding: 8px 10px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  font-size: 13px;
+}
+.ping-visitor-actions button:first-child {
+  background: var(--pink);
+  border-width: 2px;
+}
+.ping-visitor-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.gesture-hello {
+  animation: visitor-wave 700ms 280ms steps(4, end) 1;
+}
+.gesture-hug {
+  animation: visitor-hug 800ms 280ms steps(5, end) 1;
+}
+.gesture-sleepy {
+  animation: visitor-nod 900ms 280ms steps(5, end) 1;
+}
+@keyframes visitor-arrive {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes visitor-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  30% {
+    transform: rotate(-8deg) translateY(-4px);
+  }
+  65% {
+    transform: rotate(6deg);
+  }
+}
+@keyframes visitor-hug {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.12) translateY(-3px);
+  }
+}
+@keyframes visitor-nod {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(8deg) translateY(3px);
+  }
+}
+@media (max-width: 760px) {
+  .ping-visitor {
+    right: max(10px, var(--safe-right, 0px));
+    width: min(340px, calc(100vw - 20px));
+    bottom: calc(var(--dock-actual-height, 78px) + 12px);
+    max-height: calc(100dvh - var(--dock-actual-height, 78px) - var(--safe-top, 0px) - 36px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ping-visitor,
+  .ping-visitor-pet {
+    animation: none;
+  }
+}

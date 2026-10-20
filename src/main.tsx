@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+import { MotionConfig } from 'framer-motion'
 import { createRoot } from 'react-dom/client'
 import '@fontsource/press-start-2p/latin-400.css'
 import './styles.css'
@@ -16,12 +17,15 @@ watchFontScale()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <MotionConfig reducedMotion="user">
+      <App />
+    </MotionConfig>
   </StrictMode>,
 )
 
 import './home.css'
 import './fontscale.css'
+import './hierarchy.css'
 
 // 新版发布后旧分片会被清理，按需加载的页面会取不到文件。
 // 此时整页刷新一次取回最新入口；60 秒内只重试一次，避免弱网下反复刷新。

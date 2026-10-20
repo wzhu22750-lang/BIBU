@@ -377,7 +377,7 @@ export function Events({
           <div className="form-stack">
             <p>「{deleting.title}」会从两个人的空间中移除，此操作不能撤销。</p>
             <Button
-              tone="pink"
+              tone="danger"
               disabled={busy}
               onClick={() =>
                 void run(async () => {

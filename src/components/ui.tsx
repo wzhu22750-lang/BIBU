@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useId, useRef, useState } from 'react'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { Icon } from './PixelArt'
 import { errorText } from '../lib/supabase'
@@ -10,7 +10,7 @@ export function Button({
   children,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
-  tone?: 'yellow' | 'green' | 'pink' | 'blue' | 'white' | 'ink'
+  tone?: 'yellow' | 'green' | 'pink' | 'blue' | 'white' | 'ink' | 'danger'
 }) {
   return (
     <button {...props} className={`button tone-${tone} ${className}`}>
@@ -56,9 +56,14 @@ export function Panel({
     <section className={`panel ${className}`}>
       {title && (
         <div className="panel-header">
-          <h2>
-            {title} {tag && <span className="micro muted">{tag}</span>}
-          </h2>
+          <div className="panel-heading-copy">
+            <h2>{title}</h2>
+            {tag && (
+              <span className="micro muted" aria-hidden="true">
+                {tag}
+              </span>
+            )}
+          </div>
           {action}
         </div>
       )}
@@ -77,6 +82,7 @@ export function Modal({
   onClose: () => void
   className?: string
 }) {
+  const titleId = useId()
   const ref = useRef<HTMLDialogElement>(null)
   const parentToast = useContext(ToastContext)
   const [modalToast, setModalToast] = useState<{ message: string; error?: boolean } | null>(null)
@@ -111,6 +117,7 @@ export function Modal({
     <ToastContext.Provider value={showToast}>
       <dialog
         ref={ref}
+        aria-labelledby={titleId}
         className={`modal ${className}`}
         onCancel={(e) => {
           e.preventDefault()
@@ -130,7 +137,7 @@ export function Modal({
         }}
       >
         <div className="modal-header">
-          <h2>{title}</h2>
+          <h2 id={titleId}>{title}</h2>
           <button
             type="button"
             className="icon-button"
@@ -164,7 +171,7 @@ export function Modal({
   )
 }
 export function Empty({
-  icon = '♡',
+  icon = <Icon name="heart" size={32} />,
   title,
   description,
 }: {
@@ -200,12 +207,16 @@ export function PageHeading({
   return (
     <div className="page-heading">
       <div className="heading-main">
-        <span className="micro eyebrow">{eyebrow}</span>
+        <span className="micro eyebrow" aria-hidden="true">
+          {eyebrow}
+        </span>
         <div className="heading-title-row">
           {leading}
           <h1>
             {title}
-            <span className="heading-dot">.</span>
+            <span className="heading-dot" aria-hidden="true">
+              .
+            </span>
           </h1>
           {onEdit && (
             <button

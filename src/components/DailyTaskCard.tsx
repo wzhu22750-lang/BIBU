@@ -49,12 +49,14 @@ export function DailyTaskCard({
 
   if (loading && !detail) {
     return (
-      <section className="daily-task-card loading-state">
+      <section className="daily-task-card loading-state" aria-busy="true">
         <div className="card-window-bar">
-          <span className="micro">✦ TODAY'S TASK</span>
+          <span className="micro">今日小任务</span>
         </div>
         <div className="daily-task-content">
-          <p className="micro muted">正在准备今天的专属任务…</p>
+          <p className="task-state-copy" role="status">
+            正在准备今天的专属任务…
+          </p>
         </div>
       </section>
     )
@@ -64,10 +66,10 @@ export function DailyTaskCard({
     return (
       <section className="daily-task-card">
         <div className="card-window-bar">
-          <span className="micro">✦ TODAY'S TASK</span>
+          <span className="micro">今日小任务</span>
         </div>
         <div className="daily-task-content">
-          <p className="micro muted">
+          <p className="task-state-copy" role="status">
             {coupleId ? error || '今日任务稍后就绪' : '绑定空间后即可开启每日互动任务'}
           </p>
         </div>
@@ -84,7 +86,7 @@ export function DailyTaskCard({
 
   return (
     <>
-      <section className="daily-task-card" aria-label="今日小任务">
+      <section className="daily-task-card" aria-label="今日小任务" data-completed={isAllCompleted}>
         {celebrating && (
           <div
             className="celebration-particles"
@@ -104,7 +106,8 @@ export function DailyTaskCard({
 
         <div className="card-window-bar">
           <span className="micro">
-            <i /> TODAY'S TASK · {task.task_date}
+            <strong className="task-section-label">今日小任务</strong>
+            <time dateTime={task.task_date}>{task.task_date}</time>
           </span>
           <button
             type="button"
@@ -134,8 +137,10 @@ export function DailyTaskCard({
             )}
           </div>
 
-          <h3 className="daily-task-title">{task.title}</h3>
-          {task.description && <p className="daily-task-description">{task.description}</p>}
+          <div className="daily-task-summary">
+            <h3 className="daily-task-title">{task.title}</h3>
+            {task.description && <p className="daily-task-description">{task.description}</p>}
+          </div>
 
           {/* 双方完成状态栏 */}
           <div className="daily-task-players-status">
@@ -183,6 +188,14 @@ export function DailyTaskCard({
 
           {/* 底部行动按钮 */}
           <div className="daily-task-actions">
+            <span className="task-progress" role="status">
+              {isAllCompleted
+                ? '两人都已完成'
+                : isCompletedByMe
+                  ? '已完成，等 TA 一起'
+                  : '今日待完成'}
+              <small>{Number(isCompletedByMe) + Number(isCompletedByPartner)} / 2 人完成</small>
+            </span>
             <Button
               tone={isCompletedByMe ? 'white' : 'yellow'}
               onClick={() => setModalOpen(true)}

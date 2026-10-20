@@ -166,8 +166,8 @@ export function Home({
           </form>
         </Modal>
       )}
-      <div className="hero-grid">
-        <section className="together-card">
+      <div className="home-overview">
+        <section className="together-card" aria-label="我们一起走过的日子">
           <div className="card-window-bar">
             <span className="micro">
               <i /> OUR LOVE STORY.EXE
@@ -218,126 +218,95 @@ export function Home({
             <span className="micro">2 PLAYERS · 1 WORLD</span>
           </div>
         </section>
-        <section className="bibu-card">
-          <div className="bibu-intro">
-            <span className="micro">A LITTLE PING, A LOT OF LOVE</span>
-            <Icon name="spark" size={23} />
-          </div>
+      </div>
+      <div className="home-today" aria-label="今天一起做点什么">
+        <section className="bibu-card" aria-label="发送想念">
           <div className="bibu-inner">
             <div className="bibu-copy">
-              <h2>
-                想你了？
-                <br />
-                哔卟一下！
-              </h2>
+              <h2>哔卟一下！</h2>
               <p>戳一下，把想念发射给 TA</p>
-              <span className="micro">PRESS TO SEND LOVE →</span>
             </div>
             <button
               className={`bibu-button ${bibu.busy ? 'pressed' : ''}`}
               disabled={bibu.disabled}
+              aria-busy={bibu.busy}
               onClick={() => void bibu.send()}
               aria-label={`发送${bibu.kind}`}
             >
               <Icon name="heart" size={36} />
               <strong>BIBU！</strong>
-              <small>{pingFeedback(bibu.kind).label}</small>
+              <small>{bibu.busy ? '发送中…' : pingFeedback(bibu.kind).label}</small>
             </button>
           </div>
-          <div className="ping-choices" role="group" aria-label="选择哔卟心情">
-            {lovePings.map((item) => (
-              <button
-                key={item.kind}
-                aria-pressed={bibu.kind === item.kind}
-                disabled={bibu.busy}
-                onClick={() => bibu.setKind(item.kind)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+          <details className="home-mood-picker">
+            <summary>
+              换个心情 <span>{pingFeedback(bibu.kind).label}</span>
+            </summary>
+            <div className="ping-choices" role="group" aria-label="选择哔卟心情">
+              {lovePings.map((item) => (
+                <button
+                  key={item.kind}
+                  aria-pressed={bibu.kind === item.kind}
+                  disabled={bibu.busy}
+                  onClick={() => bibu.setKind(item.kind)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </details>
           <div className="bibu-bottom">
             <span>✦ {demo ? '演示模式 · 点击预览提醒效果' : '对方需在线 · 声音需先授权'}</span>
             <span>♥</span>
           </div>
         </section>
+        <DailyTaskCard
+          coupleId={space.couple?.id}
+          myUserId={space.me.id}
+          partnerUserId={space.partner?.id}
+          partnerName={space.partner?.name}
+          demo={demo}
+          reloadKey={space}
+          navigate={navigate}
+        />
       </div>
-      <DailyTaskCard
-        coupleId={space.couple?.id}
-        myUserId={space.me.id}
-        partnerUserId={space.partner?.id}
-        partnerName={space.partner?.name}
-        demo={demo}
-        reloadKey={space}
-        navigate={navigate}
-      />
-      <div className="home-section-title">
-        <h2>
-          <Icon name="calendar" />
-          下一站，值得期待<span className="micro">UP NEXT</span>
-        </h2>
-        <button className="text-button" onClick={() => navigate('events')}>
-          所有期待 <Icon name="arrow" size={14} />
-        </button>
-      </div>
-      {events.length ? (
-        <div className="home-events">
-          {events.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-          <button
-            className="add-event-card"
-            onClick={() => setAdding(true)}
-            aria-label="添加新的期待"
-          >
-            <Icon name="plus" size={24} />
-            <span>
-              再添一个
-              <br />
-              小期待
-            </span>
+      <section className="home-plans" aria-label="接下来值得期待的日子">
+        <div className="home-section-title">
+          <h2>
+            <Icon name="calendar" />
+            接下来，值得期待
+          </h2>
+          <button className="text-button" onClick={() => navigate('events')}>
+            所有期待 <Icon name="arrow" size={14} />
           </button>
         </div>
-      ) : (
-        <button className="empty-add" onClick={() => setAdding(true)}>
-          ＋ 写下我们的第一份期待
-        </button>
-      )}
-      <Panel title="最近的哔卟" tag="LITTLE MOMENTS" className="ping-history">
-        {space.pings.length ? (
-          <ul aria-label="最近哔卟记录">
-            {space.pings.slice(0, 5).map((item) => (
-              <li key={item.id}>
-                <EventArt value={pingFeedback(item.kind).art} size={28} />
-                <div>
-                  <b>
-                    {item.sender_id === null
-                      ? '已注销玩家'
-                      : item.sender_id === space.me.id
-                        ? '你'
-                        : space.partner?.name || '另一位玩家'}
-                  </b>{' '}
-                  发来「{item.kind}」
-                  <time dateTime={item.created_at}>
-                    {dateLabel(item.created_at)} {clock(item.created_at)}
-                  </time>
-                </div>
-              </li>
+        {events.length ? (
+          <div className="home-events">
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} />
             ))}
-          </ul>
+            <button
+              className="add-event-card"
+              onClick={() => setAdding(true)}
+              aria-label="添加新的期待"
+            >
+              <Icon name="plus" size={24} />
+              <span>
+                再添一个
+                <br />
+                小期待
+              </span>
+            </button>
+          </div>
         ) : (
-          <p>还没有哔卟记录。给 TA 留下一点想念吧。</p>
+          <button className="empty-add" onClick={() => setAdding(true)}>
+            ＋ 写下我们的第一份期待
+          </button>
         )}
-        <small>
-          {demo
-            ? '本地演示记录，不会发送给真实伴侣。'
-            : '最近 50 条中展示最新 5 条；记录不代表对方已读或通知已送达。'}
-        </small>
-      </Panel>
+      </section>
       <div className="home-lower">
         <Panel
           title="今天翻到的回忆"
-          tag="OUR MEMORIES"
           className="memories-panel"
           action={
             <button className="text-button" onClick={() => navigate('photos')}>
@@ -359,12 +328,7 @@ export function Home({
           </div>
         </Panel>
         <div className="home-side">
-          <Panel
-            title="悄悄话"
-            tag="JUST US"
-            action={<Icon name="chat" size={19} />}
-            className="chat-preview"
-          >
+          <Panel title="悄悄话" action={<Icon name="chat" size={19} />} className="chat-preview">
             <div className="chat-preview-content">
               <span className="tiny-avatar pink">
                 {(() => {
@@ -409,6 +373,42 @@ export function Home({
           </button>
         </div>
       </div>
+      <details className="home-history">
+        <summary>
+          最近的哔卟 <span>查看互动记录</span>
+        </summary>
+        <Panel className="ping-history">
+          {space.pings.length ? (
+            <ul aria-label="最近哔卟记录">
+              {space.pings.slice(0, 5).map((item) => (
+                <li key={item.id}>
+                  <EventArt value={pingFeedback(item.kind).art} size={28} />
+                  <div>
+                    <b>
+                      {item.sender_id === null
+                        ? '已注销玩家'
+                        : item.sender_id === space.me.id
+                          ? '你'
+                          : space.partner?.name || '另一位玩家'}
+                    </b>{' '}
+                    发来「{item.kind}」
+                    <time dateTime={item.created_at}>
+                      {dateLabel(item.created_at)} {clock(item.created_at)}
+                    </time>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>还没有哔卟记录。给 TA 留下一点想念吧。</p>
+          )}
+          <small>
+            {demo
+              ? '本地演示记录，不会发送给真实伴侣。'
+              : '最近 50 条中展示最新 5 条；记录不代表对方已读或通知已送达。'}
+          </small>
+        </Panel>
+      </details>
       <div className="home-signoff">
         <span className="micro">✳ THIS MUST BE THE PLACE ✳</span>
         <span>宇宙很大，但我的小窝刚好装下你。</span>

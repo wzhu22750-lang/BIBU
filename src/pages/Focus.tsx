@@ -40,8 +40,6 @@ export function Focus({ controller }: { controller: SpaceController }) {
           {reminderResult}
         </div>
       )}
-      <ReminderPanel />
-      <ScreenTimePanel />
       <div className="focus-layout">
         <Panel className="focus-main" title="我的专注时间" tag="PLAYER 01">
           <div className="focus-timer-area">
@@ -147,13 +145,13 @@ export function Focus({ controller }: { controller: SpaceController }) {
                 />
                 专注结束时提醒我（Android 本机，系统可能延后）
               </label>
-              <p className="form-note">
-                与“允许伴侣提醒”独立。通知只含通用文案；在其他设备结束专注不会立即取消本机闹钟，可从上方列表取消。
-              </p>
               <Button tone="green" disabled={busy} type="submit">
                 <Icon name="focus" size={20} />
                 开始专注
               </Button>
+              <p className="form-note">
+                与“允许伴侣提醒”独立。通知只含通用文案；在其他设备结束专注不会立即取消本机闹钟，可从下方提醒列表取消。
+              </p>
             </form>
           )}
         </Panel>
@@ -205,6 +203,10 @@ export function Focus({ controller }: { controller: SpaceController }) {
           </div>
         </div>
       </div>
+      <section className="focus-support" aria-label="提醒与设备使用情况">
+        <ReminderPanel />
+        <ScreenTimePanel />
+      </section>
     </>
   )
 }

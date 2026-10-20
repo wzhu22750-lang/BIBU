@@ -178,7 +178,15 @@ function Workspace({
           )}
         </Suspense>
       </Shell>
-      {controller.ping && <PingEffect ping={controller.ping} onClose={controller.dismissPing} />}
+      {controller.ping && (
+        <PingEffect
+          key={controller.ping.id}
+          ping={controller.ping}
+          sender={demo ? controller.space?.me : controller.space?.partner}
+          onClose={controller.dismissPing}
+          onChat={() => navigate('chat')}
+        />
+      )}
     </>
   )
 }
