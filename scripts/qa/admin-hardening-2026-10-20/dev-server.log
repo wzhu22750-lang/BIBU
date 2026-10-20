@@ -1,0 +1,11 @@
+
+> bibu-private-space@0.1.0 admin:dev
+> vite --config apps/admin/vite.config.ts
+
+5:58:47 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.2.2  ready in 204 ms
+
+  ➜  Local:   http://localhost:5175/
+  ➜  Network: http://10.47.193.178:5175/  en0
+  ➜  Network: http://198.18.0.1:5175/     utun4

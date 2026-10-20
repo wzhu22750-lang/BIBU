@@ -25,7 +25,10 @@ function AuthFrame({
           </div>
         </div>
         <div className="auth-brand-copy">
-          <h2>把两个人的小基地，照看好。</h2>
+          <h2>
+            <span>把两个人的小基地，</span>
+            <span>照看好。</span>
+          </h2>
           <p>查看真实的配对与互动、定位通知问题、处理用户反馈，并让每一次管理操作都有迹可循。</p>
           <ul className="auth-points">
             <li>

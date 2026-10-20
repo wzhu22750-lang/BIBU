@@ -27,6 +27,7 @@ import {
 } from '../components/ui'
 import { MetricLink, useListRange } from './shared'
 import { useAuth } from '../lib/auth'
+import { Icon } from '../components/Icon'
 
 const TREND_OPTIONS: Array<{ value: TrendMetric; label: string }> = [
   { value: 'new_users', label: '新增注册用户' },
@@ -133,10 +134,15 @@ export function OverviewPage({ route }: { route: RouteState }) {
       </div>
       {state.error ? <InlineError error={state.error} onRetry={state.reload} /> : null}
 
-      <div className="metric-grid">
+      <div className="metric-grid overview-metrics">
         <article className="metric-card">
           <div className="metric-top">
-            <span>新增注册用户</span>
+            <span className="metric-heading">
+              <span className="metric-icon">
+                <Icon name="users" size={18} />
+              </span>
+              新增注册用户
+            </span>
             <MetricLink href={usersCreatedLink}>查看名单</MetricLink>
           </div>
           <strong className="metric-value">{formatNumber(current.new_users)}</strong>
@@ -148,7 +154,12 @@ export function OverviewPage({ route }: { route: RouteState }) {
 
         <article className="metric-card">
           <div className="metric-top">
-            <span>新建双人空间</span>
+            <span className="metric-heading">
+              <span className="metric-icon">
+                <Icon name="heart" size={18} />
+              </span>
+              新建双人空间
+            </span>
             <MetricLink href={couplesCreatedLink}>查看空间</MetricLink>
           </div>
           <strong className="metric-value">{formatNumber(current.new_couples)}</strong>
@@ -162,7 +173,12 @@ export function OverviewPage({ route }: { route: RouteState }) {
 
         <article className="metric-card">
           <div className="metric-top">
-            <span>双向互动空间</span>
+            <span className="metric-heading">
+              <span className="metric-icon">
+                <Icon name="pulse" size={18} />
+              </span>
+              双向互动空间
+            </span>
             <MetricLink href={mutualLink}>查看空间</MetricLink>
           </div>
           <strong className="metric-value">{formatNumber(current.mutual_spaces)}</strong>
@@ -180,7 +196,12 @@ export function OverviewPage({ route }: { route: RouteState }) {
 
         <article className="metric-card">
           <div className="metric-top">
-            <span>双人任务完成率</span>
+            <span className="metric-heading">
+              <span className="metric-icon">
+                <Icon name="check" size={18} />
+              </span>
+              双人任务完成率
+            </span>
             <MetricLink href={taskDoubleLink}>查看完成空间</MetricLink>
           </div>
           <strong className="metric-value">
@@ -198,8 +219,43 @@ export function OverviewPage({ route }: { route: RouteState }) {
         </article>
       </div>
 
-      <div className="split-grid">
-        <Panel title="待处理异常" subtitle="只呈现在当前时间仍需要人工跟进的事项">
+      <div className="overview-insights">
+        <Panel
+          className="overview-trend"
+          icon="overview"
+          title="趋势"
+          subtitle={`${from} 至 ${to} · 北京时间 · 上期对比区间 ${previous.from} 至 ${previous.to}`}
+          actions={
+            <div className="segmented" role="group" aria-label="切换趋势指标">
+              {TREND_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={metric === option.value ? 'segment segment-active' : 'segment'}
+                  aria-pressed={metric === option.value}
+                  onClick={() => setMetric(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          }
+        >
+          {metric === 'task_rate' ? (
+            <SectionNote>
+              每日任务率为当日“双人各有完成记录的任务数 / 当前 2 人空间当日分配任务数”， 分母为 0
+              的日期留空，不以 0% 代替。
+            </SectionNote>
+          ) : null}
+          <TrendChart series={data.series} metric={metric} />
+        </Panel>
+
+        <Panel
+          className="overview-queue"
+          icon="ticket"
+          title="待处理异常"
+          subtitle="只呈现在当前时间仍需要人工跟进的事项"
+        >
           <div className="alert-list">
             <button
               type="button"
@@ -260,7 +316,69 @@ export function OverviewPage({ route }: { route: RouteState }) {
           </div>
         </Panel>
 
-        <Panel title="近期失败通知" subtitle="24 小时内 provider_rejected / invalid_token">
+        <Panel
+          className="overview-feedback"
+          icon="ticket"
+          title="最新用户反馈"
+          subtitle="用户主动提交的工单摘要，不含私密聊天或照片内容"
+          actions={
+            <Button tone="ghost" size="sm" onClick={() => navigate('/tickets', { status: 'open' })}>
+              全部工单
+            </Button>
+          }
+          flush
+        >
+          {data.recent_tickets.length === 0 ? (
+            <StateView
+              kind="empty"
+              title="还没有用户反馈"
+              description="用户从设置页提交后会出现在这里。"
+            />
+          ) : (
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>工单</th>
+                    <th>分类</th>
+                    <th>状态</th>
+                    <th>摘要</th>
+                    <th>创建时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.recent_tickets.map((ticket: RecentTicket) => (
+                    <tr key={ticket.id}>
+                      <td className="mono">
+                        <a
+                          className="inline-link"
+                          href={detailHref(`/tickets/${ticket.id}`, route)}
+                        >
+                          {ticket.ticket_no}
+                        </a>
+                      </td>
+                      <td>{ticketCategoryLabels[ticket.category]}</td>
+                      <td>
+                        <StatusPill tone={detailStatusTone(ticket.status)}>
+                          {ticketStatusLabels[ticket.status]}
+                        </StatusPill>
+                      </td>
+                      <td className="text-truncate">{ticket.excerpt}</td>
+                      <td>{formatDateTime(ticket.created_at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Panel>
+
+        <Panel
+          className="overview-failures"
+          icon="pulse"
+          title="近期失败通知"
+          subtitle="24 小时内 provider_rejected / invalid_token"
+        >
           {data.recent_failures === null ? (
             <StateView
               kind="denied"
@@ -304,86 +422,6 @@ export function OverviewPage({ route }: { route: RouteState }) {
           )}
         </Panel>
       </div>
-
-      <Panel
-        title="趋势"
-        subtitle={`${from} 至 ${to} · 北京时间 · 上期对比区间 ${previous.from} 至 ${previous.to}`}
-        actions={
-          <div className="segmented" role="group" aria-label="切换趋势指标">
-            {TREND_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={metric === option.value ? 'segment segment-active' : 'segment'}
-                aria-pressed={metric === option.value}
-                onClick={() => setMetric(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        }
-      >
-        {metric === 'task_rate' ? (
-          <SectionNote>
-            每日任务率为当日“双人各有完成记录的任务数 / 当前 2 人空间当日分配任务数”， 分母为 0
-            的日期留空，不以 0% 代替。
-          </SectionNote>
-        ) : null}
-        <TrendChart series={data.series} metric={metric} />
-      </Panel>
-
-      <Panel
-        title="最新用户反馈"
-        subtitle="用户主动提交的工单摘要，不含私密聊天或照片内容"
-        actions={
-          <Button tone="ghost" size="sm" onClick={() => navigate('/tickets', { status: 'open' })}>
-            全部工单
-          </Button>
-        }
-        flush
-      >
-        {data.recent_tickets.length === 0 ? (
-          <StateView
-            kind="empty"
-            title="还没有用户反馈"
-            description="用户从设置页提交后会出现在这里。"
-          />
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>工单</th>
-                  <th>分类</th>
-                  <th>状态</th>
-                  <th>摘要</th>
-                  <th>创建时间</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.recent_tickets.map((ticket: RecentTicket) => (
-                  <tr key={ticket.id}>
-                    <td className="mono">
-                      <a className="inline-link" href={detailHref(`/tickets/${ticket.id}`, route)}>
-                        {ticket.ticket_no}
-                      </a>
-                    </td>
-                    <td>{ticketCategoryLabels[ticket.category]}</td>
-                    <td>
-                      <StatusPill tone={detailStatusTone(ticket.status)}>
-                        {ticketStatusLabels[ticket.status]}
-                      </StatusPill>
-                    </td>
-                    <td className="text-truncate">{ticket.excerpt}</td>
-                    <td>{formatDateTime(ticket.created_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Panel>
 
       <details className="help-disclosure">
         <summary>指标口径与采集说明</summary>

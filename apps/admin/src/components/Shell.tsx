@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useAuth } from '../lib/auth'
 import { roleLabels } from '../lib/format'
 import { routeHref, type RouteState } from '../lib/route'
-import { Icon, type IconName } from './Icon'
+import { BrandMark, Icon, type IconName } from './Icon'
 import { Button } from './ui'
 
 type NavItem = {
@@ -85,6 +85,8 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
   const [menuOpen, setMenuOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const sidebarRef = useRef<HTMLElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const currentHref = routeHref(route.path, route.params)
   const visible = NAV.filter((item) => auth.can(item.capability))
   const active = activePath(route.path)
@@ -150,11 +152,36 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
 
   useEffect(() => {
     if (!menuOpen) return
+    const sidebar = sidebarRef.current
+    sidebar?.querySelector<HTMLButtonElement>('.mobile-close')?.focus()
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setMenuOpen(false)
+      if (event.key === 'Tab' && sidebar) {
+        const controls = Array.from(
+          sidebar.querySelectorAll<HTMLElement>('a[href], button'),
+        ).filter((element) => element.getClientRects().length > 0)
+        const first = controls[0]
+        const last = controls[controls.length - 1]
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault()
+          last?.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault()
+          first?.focus()
+        }
+      }
     }
+    const desktop = window.matchMedia('(min-width: 981px)')
+    const onResize = () => {
+      if (desktop.matches) setMenuOpen(false)
+    }
+    desktop.addEventListener('change', onResize)
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      desktop.removeEventListener('change', onResize)
+      menuButtonRef.current?.focus()
+    }
   }, [menuOpen])
 
   async function signOut() {
@@ -178,18 +205,16 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
       >
         跳到主要内容
       </a>
-      <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`} aria-label="管理台导航">
+      <aside
+        ref={sidebarRef}
+        id="admin-navigation"
+        className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`}
+        aria-label="管理台导航"
+      >
         <div className="sidebar-brand">
           <div className="brand-lockup">
             <span className="brand-mark-small" aria-hidden="true">
-              <svg width="30" height="30" viewBox="0 0 32 32" shapeRendering="crispEdges">
-                <rect x="2" y="2" width="28" height="28" fill="#20211d" />
-                <rect x="4" y="4" width="24" height="24" fill="#fff238" />
-                <rect x="18" y="6" width="6" height="6" fill="#ffa6e8" />
-                <rect x="8" y="6" width="6" height="6" fill="#04bcf0" />
-                <rect x="14" y="8" width="4" height="12" fill="#20211d" />
-                <rect x="14" y="22" width="4" height="4" fill="#20211d" />
-              </svg>
+              <BrandMark size={36} />
             </span>
             <span>
               <span className="brand-word">BIBU！</span>
@@ -222,6 +247,9 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
                   >
                     <Icon name={item.icon} size={18} />
                     <span>{item.label}</span>
+                    {active === item.path && (
+                      <Icon name="chevron" size={13} className="nav-current" />
+                    )}
                   </a>
                 ))}
               </div>
@@ -258,6 +286,8 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
               className="mobile-menu"
               aria-label="打开导航"
               aria-expanded={menuOpen}
+              aria-controls="admin-navigation"
+              ref={menuButtonRef}
               onClick={() => setMenuOpen(true)}
             >
               <Icon name="menu" size={20} />
@@ -276,6 +306,9 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
             </div>
           </div>
           <div className="topbar-right">
+            <span className="admin-avatar" aria-hidden="true">
+              {(session?.actor.display_name || '管').slice(0, 1)}
+            </span>
             <div className="admin-identity">
               <strong>{session?.actor.display_name || '管理员'}</strong>
               <span>

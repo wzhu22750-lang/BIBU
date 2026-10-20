@@ -44,6 +44,7 @@ export function Button({
 
 export function Panel({
   title,
+  icon,
   subtitle,
   actions,
   children,
@@ -51,6 +52,7 @@ export function Panel({
   flush = false,
 }: {
   title?: ReactNode
+  icon?: IconName
   subtitle?: ReactNode
   actions?: ReactNode
   children: ReactNode
@@ -62,7 +64,12 @@ export function Panel({
       {(title || actions) && (
         <header className="panel-head">
           <div>
-            {title && <h2>{title}</h2>}
+            {title && (
+              <h2>
+                {icon && <Icon name={icon} size={17} />}
+                {title}
+              </h2>
+            )}
             {subtitle && <p className="panel-subtitle">{subtitle}</p>}
           </div>
           {actions && <div className="panel-actions">{actions}</div>}

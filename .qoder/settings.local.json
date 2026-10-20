@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -n '1,160p' src/styles.css && echo \"---ICON NAME---\" && grep -n \"export type IconName\\\\|const ICONS\\\\|^  [a-z].*:\" src/components/PixelArt.tsx | head -120)",
+      "Bash(cut -d= -f1 .env.local .env.release 2>/dev/null | sed 's/^/ENV: /' && echo \"---supabase cli---\" && \\(supabase --version 2>/dev/null || echo \"no supabase cli\"\\) && echo \"---deno---\" && \\(deno --version 2>/dev/null | head -1 || echo \"no deno\"\\) && echo \"---playwright---\" && ls .playwright-cli 2>/dev/null | head)",
+      "Bash(ls -la ~/.qoder/ 2>/dev/null; echo \"---settings---\"; cat ~/.qoder/settings.json 2>/dev/null; echo \"---project---\"; ls -la .qoder/ 2>/dev/null)",
+      "Read(//Users/kuangqie/.qoder/**)",
+      "Bash(node:*)",
+      "Bash(grep -n \"catch\\\\|then\\\\|finally\" node_modules/@supabase/postgrest-js/dist/cjs/PostgrestBuilder.js | head -40; echo \"---VERSION---\"; node -p \"require\\('./node_modules/@supabase/postgrest-js/package.json'\\).version\"; node -p \"require\\('./node_modules/@supabase/supabase-js/package.json'\\).version\")",
+      "Bash(cat apps/admin/vercel.json; echo '---'; git log --oneline -5 -- apps/admin 2>/dev/null; echo '---'; git status --short | head -60)"
+    ]
+  }
+}

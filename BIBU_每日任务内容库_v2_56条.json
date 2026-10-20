@@ -1,0 +1,1756 @@
+{
+  "schema_version": "bibu-content-review-v1",
+  "content_version": "2026-10-20-v1",
+  "status": "editorially_reviewed_not_integrated",
+  "templates": [
+    {
+      "id": "bibu_v2_express_01",
+      "title": "今天有一件事想谢谢你",
+      "description": "挑一件具体的小事说声谢谢，不需要写成一封信。",
+      "task_type": "interaction",
+      "action_type": "input",
+      "category": "轻轻表达",
+      "prompt_hint": "谢谢你上次认真听我讲完那件事。"
+    },
+    {
+      "id": "bibu_v2_express_02",
+      "title": "给忙碌中的 TA 留一句话",
+      "description": "留一句对方晚点看到也合适的话，不需要等回复。",
+      "task_type": "interaction",
+      "action_type": "input",
+      "category": "轻轻表达",
+      "prompt_hint": "你先忙，等有空我们再慢慢聊。"
+    },
+    {
+      "id": "bibu_v2_express_03",
+      "title": "说说你喜欢的一个小习惯",
+      "description": "选择让你觉得舒服的小习惯，不评价外貌或和别人比较。",
+      "task_type": "interaction",
+      "action_type": "input",
+      "category": "轻轻表达",
+      "prompt_hint": "你说晚安之前，总会问我明天忙不忙。"
+    },
+    {
+      "id": "bibu_v2_express_04",
+      "title": "把一句夸奖说具体",
+      "description": "说一件你欣赏对方做过的事，只写你真正认同的部分。",
+      "task_type": "interaction",
+      "action_type": "input",
+      "category": "轻轻表达",
+      "prompt_hint": "我喜欢你遇到不懂的事会认真问清楚。"
+    },
+    {
+      "id": "bibu_v2_express_05",
+      "title": "分享一个想起 TA 的瞬间",
+      "description": "今天或最近什么时候想到了对方？没有特别原因也可以。",
+      "task_type": "interaction",
+      "action_type": "input",
+      "category": "轻轻表达",
+      "prompt_hint": "看到一只趴着睡觉的小猫时想起了你。"
+    },
+    {
+      "id": "bibu_v2_express_06",
+      "title": "留一句不催回复的晚安",
+      "description": "写一句晚点读也不会有负担的晚安，现在不困也可以先留着。",
+      "task_type": "interaction",
+      "action_type": "input",
+      "category": "轻轻表达",
+      "prompt_hint": "我先去休息啦，你按自己的节奏来。"
+    },
+    {
+      "id": "bibu_v2_express_07",
+      "title": "告诉 TA 一件你期待的小事",
+      "description": "选一件不要求对方马上安排的事，表达期待就好。",
+      "task_type": "interaction",
+      "action_type": "input",
+      "category": "轻轻表达",
+      "prompt_hint": "我有点期待下次和你慢慢吃顿早饭。"
+    },
+    {
+      "id": "bibu_v2_today_01",
+      "title": "今天哪一刻舒服了一点",
+      "description": "想一个轻松、安静或方便了一点的瞬间，普通的一天也有答案。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "交换日常",
+      "prompt_hint": "终于找到一个不用排队的收银台。"
+    },
+    {
+      "id": "bibu_v2_today_02",
+      "title": "用一个天气形容今天",
+      "description": "写一个天气和一句原因，不需要把心情讲得很完整。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "交换日常",
+      "prompt_hint": "多云，事情不少，但中间有一小段晴天。"
+    },
+    {
+      "id": "bibu_v2_today_03",
+      "title": "今天有什么想留到明天再说",
+      "description": "可以留一个话题，也可以回答今天没有，别把它变成待办。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "交换日常",
+      "prompt_hint": "看到一家店，明天想跟你聊聊。"
+    },
+    {
+      "id": "bibu_v2_today_04",
+      "title": "最近吃到什么值得一提",
+      "description": "分享一道食物或一个口味，不要求拍照或再消费一次。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "交换日常",
+      "prompt_hint": "今天的面有一点酸，意外地喜欢。"
+    },
+    {
+      "id": "bibu_v2_today_05",
+      "title": "今天有哪个声音留下了印象",
+      "description": "回想一个日常声音，用文字描述即可，不需要录音。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "交换日常",
+      "prompt_hint": "路过树下听见了很热闹的鸟叫。"
+    },
+    {
+      "id": "bibu_v2_today_06",
+      "title": "今天想少做一件什么事",
+      "description": "可以写一件你想暂缓的小事，不需要解释或承诺完成。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "交换日常",
+      "prompt_hint": "今晚想少刷一会儿短视频，早点躺下。"
+    },
+    {
+      "id": "bibu_v2_today_07",
+      "title": "把今天压缩成一句话",
+      "description": "用你自己的语气说说今天，平淡也可以，不用强行积极。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "交换日常",
+      "prompt_hint": "忙了一天，现在只想安安静静坐一会儿。"
+    },
+    {
+      "id": "bibu_v2_know_01",
+      "title": "空出半小时，你想怎么过",
+      "description": "说说当下的选择，不代表以后每次都要这样安排。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "慢慢了解",
+      "prompt_hint": "找个安静地方喝点东西，暂时不看手机。"
+    },
+    {
+      "id": "bibu_v2_know_02",
+      "title": "你喜欢怎样被说晚安",
+      "description": "分享一种舒服的方式，表达自己的偏好，不给对方打分。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "慢慢了解",
+      "prompt_hint": "一句简单的晚安就很好，不用等我回完才睡。"
+    },
+    {
+      "id": "bibu_v2_know_03",
+      "title": "收到小惊喜时你偏爱什么",
+      "description": "聊聊文字、食物、小物件等偏好，不需要购买或送礼。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "慢慢了解",
+      "prompt_hint": "我会喜欢一张写了几句话的小纸条。"
+    },
+    {
+      "id": "bibu_v2_know_04",
+      "title": "忙的时候哪种留言比较舒服",
+      "description": "只说明你的偏好，答案不自动改变任何通知设置。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "慢慢了解",
+      "prompt_hint": "先告诉我是什么事，我有空再认真看。"
+    },
+    {
+      "id": "bibu_v2_know_05",
+      "title": "临时取消计划时你希望怎么说",
+      "description": "可以给一句你听着比较舒服的表达，不借题追究旧事。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "慢慢了解",
+      "prompt_hint": "早点告诉我，再一起看看哪天方便。"
+    },
+    {
+      "id": "bibu_v2_know_06",
+      "title": "今天更喜欢安静还是热闹",
+      "description": "选一个当下更想要的状态，明天改变主意也没关系。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "慢慢了解",
+      "prompt_hint": "今天想安静一点，过两天可能又想出门。"
+    },
+    {
+      "id": "bibu_v2_know_07",
+      "title": "最近有什么小兴趣想分享",
+      "description": "选择你愿意聊的兴趣，也可以说暂时没有新发现。",
+      "task_type": "question",
+      "action_type": "input",
+      "category": "慢慢了解",
+      "prompt_hint": "最近有点想了解怎么把植物养得精神一点。"
+    },
+    {
+      "id": "bibu_v2_memory_01",
+      "title": "想起一次一起笑过的瞬间",
+      "description": "写一个你记得的片段，记不清日期也没关系。",
+      "task_type": "memory",
+      "action_type": "input",
+      "category": "捡起回忆",
+      "prompt_hint": "上次我们把同一句话听成了两个意思。"
+    },
+    {
+      "id": "bibu_v2_memory_02",
+      "title": "回忆一个普通但舒服的时刻",
+      "description": "不必寻找旅行或节日，日常的片段就可以。",
+      "task_type": "memory",
+      "action_type": "input",
+      "category": "捡起回忆",
+      "prompt_hint": "那次各自做事，偶尔抬头说两句话。"
+    },
+    {
+      "id": "bibu_v2_memory_03",
+      "title": "你还记得哪次有趣的聊天",
+      "description": "只写你愿意回想的部分，不需要翻找或截取聊天记录。",
+      "task_type": "memory",
+      "action_type": "input",
+      "category": "捡起回忆",
+      "prompt_hint": "我们认真讨论过一只猫适合什么职业。"
+    },
+    {
+      "id": "bibu_v2_memory_04",
+      "title": "给一个共同片段起标题",
+      "description": "挑一件共同经历，用短标题记下来；也可以选一次线上聊天。",
+      "task_type": "memory",
+      "action_type": "input",
+      "category": "捡起回忆",
+      "prompt_hint": "两个人都走错方向的那一天。"
+    },
+    {
+      "id": "bibu_v2_memory_05",
+      "title": "想起一个曾被照顾的小细节",
+      "description": "如果没有马上想到，可以写一个今后希望发生的小细节。",
+      "task_type": "memory",
+      "action_type": "input",
+      "category": "捡起回忆",
+      "prompt_hint": "你记得我不太喜欢太甜的饮料。"
+    },
+    {
+      "id": "bibu_v2_memory_06",
+      "title": "回忆一次临时改变的计划",
+      "description": "选一段轻松的经历，聊聊后来发生了什么，不评判谁做错。",
+      "task_type": "memory",
+      "action_type": "input",
+      "category": "捡起回忆",
+      "prompt_hint": "没赶上那家店，最后在路边吃得很开心。"
+    },
+    {
+      "id": "bibu_v2_memory_07",
+      "title": "哪件小事值得以后再来一次",
+      "description": "可以是一起散步、听歌，也可以是聊一个话题，不用现在约时间。",
+      "task_type": "memory",
+      "action_type": "input",
+      "category": "捡起回忆",
+      "prompt_hint": "想再一起找个地方，看一会儿天慢慢变暗。"
+    },
+    {
+      "id": "bibu_v2_photo_01",
+      "title": "收藏今天的一点光",
+      "description": "愿意时拍下光落在物件上的样子，存入照片墙；不方便拍就只看一会儿，再自行确认。",
+      "task_type": "photo",
+      "action_type": "photo",
+      "category": "随手收藏",
+      "prompt_hint": "窗帘边、杯子旁或桌面的一小块光。"
+    },
+    {
+      "id": "bibu_v2_photo_02",
+      "title": "拍一个让你喜欢的颜色",
+      "description": "找一个颜色鲜明的小物件，不用拍到人，也不用买东西；不方便上传就欣赏后自行确认。",
+      "task_type": "photo",
+      "action_type": "photo",
+      "category": "随手收藏",
+      "prompt_hint": "书脊的一抹蓝，或杯子上的一点粉。"
+    },
+    {
+      "id": "bibu_v2_photo_03",
+      "title": "留住一个日常小角落",
+      "description": "选一个你愿意分享、不含地址和个人资料的局部；不方便拍照就观察后自行确认。",
+      "task_type": "photo",
+      "action_type": "photo",
+      "category": "随手收藏",
+      "prompt_hint": "桌角的一本书和一支笔。"
+    },
+    {
+      "id": "bibu_v2_photo_04",
+      "title": "收藏一个有趣的纹理",
+      "description": "拍一小块布料、树皮或纸面，不追求构图；不方便上传时只观察也可以自行确认。",
+      "task_type": "photo",
+      "action_type": "photo",
+      "category": "随手收藏",
+      "prompt_hint": "衣袖上的针脚，或旧纸上的折痕。"
+    },
+    {
+      "id": "bibu_v2_photo_05",
+      "title": "拍一件陪你很久的小物",
+      "description": "选择普通物件，避免证件、账单和聊天屏幕；没有合适照片时看看它再自行确认。",
+      "task_type": "photo",
+      "action_type": "photo",
+      "category": "随手收藏",
+      "prompt_hint": "用了很久的杯子、钥匙扣或笔袋。"
+    },
+    {
+      "id": "bibu_v2_photo_06",
+      "title": "留下一块今天的天空",
+      "description": "在安全方便的位置拍摄，不需要出门寻找；不方便时看一眼窗外即可自行确认。",
+      "task_type": "photo",
+      "action_type": "photo",
+      "category": "随手收藏",
+      "prompt_hint": "阴天、晴天都可以，不用等晚霞。"
+    },
+    {
+      "id": "bibu_v2_photo_07",
+      "title": "收藏一件形状有趣的东西",
+      "description": "找一个容易忽略的轮廓，愿意时存进照片墙；不能拍照时观察后自行确认。",
+      "task_type": "photo",
+      "action_type": "photo",
+      "category": "随手收藏",
+      "prompt_hint": "一片叶子的边缘，或一个弯弯的把手。"
+    },
+    {
+      "id": "bibu_v2_play_01",
+      "title": "给今天起一个小标题",
+      "description": "像给一段小故事起名，不需要有梗，也不用让对方猜对。",
+      "task_type": "random",
+      "action_type": "input",
+      "category": "轻松脑洞",
+      "prompt_hint": "赶上最后一班车的普通一天。"
+    },
+    {
+      "id": "bibu_v2_play_02",
+      "title": "给两个人的小窝取个临时店名",
+      "description": "只当一次文字小游戏，不会自动改掉空间名称。",
+      "task_type": "random",
+      "action_type": "input",
+      "category": "轻松脑洞",
+      "prompt_hint": "晚点开门的两人杂货铺。"
+    },
+    {
+      "id": "bibu_v2_play_03",
+      "title": "如果宠物送来一张便签",
+      "description": "想一句你希望看到的便签，角色不需要真正说话。",
+      "task_type": "random",
+      "action_type": "input",
+      "category": "轻松脑洞",
+      "prompt_hint": "今天也可以慢一点。"
+    },
+    {
+      "id": "bibu_v2_play_04",
+      "title": "用三个普通词拼一个场景",
+      "description": "随意选三个词描述一个画面，对方有空时可以接着想。",
+      "task_type": "random",
+      "action_type": "input",
+      "category": "轻松脑洞",
+      "prompt_hint": "雨声、面包、靠窗的位置。"
+    },
+    {
+      "id": "bibu_v2_play_05",
+      "title": "给今天的自己起个角色名",
+      "description": "用你愿意接受的名字，不评价对方，也不强行起外号。",
+      "task_type": "random",
+      "action_type": "input",
+      "category": "轻松脑洞",
+      "prompt_hint": "刚刚完成充电的小蘑菇。"
+    },
+    {
+      "id": "bibu_v2_play_06",
+      "title": "假设小窝里多一扇窗",
+      "description": "写写窗外想看见什么，只是想象，不需要解锁或购买。",
+      "task_type": "random",
+      "action_type": "input",
+      "category": "轻松脑洞",
+      "prompt_hint": "一条安静的小路，偶尔有猫经过。"
+    },
+    {
+      "id": "bibu_v2_play_07",
+      "title": "给一件普通物品编一句台词",
+      "description": "选手边安全的小物件，用一句话替它发言。",
+      "task_type": "random",
+      "action_type": "input",
+      "category": "轻松脑洞",
+      "prompt_hint": "水杯说：今天我终于没有被忘在桌上。"
+    },
+    {
+      "id": "bibu_v2_together_01",
+      "title": "各自整理一小块地方",
+      "description": "选桌角、包里或手机桌面的一小块整理一下，不必同时开始，也不用拍照证明。",
+      "task_type": "interaction",
+      "action_type": "done",
+      "category": "各自也能做",
+      "prompt_hint": "整理一支笔或一个不用的快捷入口就够了。"
+    },
+    {
+      "id": "bibu_v2_together_02",
+      "title": "给下一次聊天留一个话题",
+      "description": "把想聊的一件小事记在这里或自己的便签里，不需要立刻叫对方来聊。",
+      "task_type": "interaction",
+      "action_type": "done",
+      "category": "各自也能做",
+      "prompt_hint": "最近看到一个有意思的画面。"
+    },
+    {
+      "id": "bibu_v2_together_03",
+      "title": "各自听一段喜欢的声音",
+      "description": "听一小段已有的音乐或环境声，不必同一首，也不需要付费或录音上传。",
+      "task_type": "interaction",
+      "action_type": "done",
+      "category": "各自也能做",
+      "prompt_hint": "听完愿意的话，说说你喜欢它的哪一点。"
+    },
+    {
+      "id": "bibu_v2_together_04",
+      "title": "为明天少留一个小麻烦",
+      "description": "做一件方便明天自己的小事，完成后自行确认，不要求对方跟进检查。",
+      "task_type": "interaction",
+      "action_type": "done",
+      "category": "各自也能做",
+      "prompt_hint": "把明天要用的东西放在容易找到的地方。"
+    },
+    {
+      "id": "bibu_v2_together_05",
+      "title": "选一个下次想一起做的小活动",
+      "description": "可以各自提出一个想法，时间、预算以后再谈，不需要今天达成一致。",
+      "task_type": "interaction",
+      "action_type": "done",
+      "category": "各自也能做",
+      "prompt_hint": "下次一起散步，或者在线聊聊最近看的故事。"
+    },
+    {
+      "id": "bibu_v2_together_06",
+      "title": "给自己留一分钟空白",
+      "description": "在安全方便的时候暂缓手头的小事，按自己的方式停一会儿；不方便今天做也可以留待以后。",
+      "task_type": "interaction",
+      "action_type": "done",
+      "category": "各自也能做",
+      "prompt_hint": "看看远处，或安静坐一会儿。"
+    },
+    {
+      "id": "bibu_v2_together_07",
+      "title": "把一句想说的话留在小窝",
+      "description": "可以在这里写下，也可以去悄悄话说；不用要求对方立即回应。",
+      "task_type": "interaction",
+      "action_type": "done",
+      "category": "各自也能做",
+      "prompt_hint": "忙完回来看到你留下的话，会觉得很好。"
+    },
+    {
+      "id": "bibu_v2_focus_01",
+      "title": "留十五分钟读点东西",
+      "description": "如果方便，在专注页选择十五分钟阅读，各自开始即可；也可以用自己的计时器。结束后回任务页自行确认。",
+      "task_type": "focus",
+      "action_type": "focus",
+      "category": "安静陪伴",
+      "prompt_hint": "读已有的书或文章，不要求读完一章。"
+    },
+    {
+      "id": "bibu_v2_focus_02",
+      "title": "用十五分钟推进一件小事",
+      "description": "在专注页选择十五分钟，做一件范围很小的事，不必与对方同步。结束后回任务页自行确认。",
+      "task_type": "focus",
+      "action_type": "focus",
+      "category": "安静陪伴",
+      "prompt_hint": "把正在做的一件事向前推进一点。"
+    },
+    {
+      "id": "bibu_v2_focus_03",
+      "title": "留十五分钟整理思路",
+      "description": "可以在专注页选择十五分钟工作，也可自行计时。写下或想清一个问题，结束后回任务页自行确认。",
+      "task_type": "focus",
+      "action_type": "focus",
+      "category": "安静陪伴",
+      "prompt_hint": "先想清下一步，不必今天解决全部。"
+    },
+    {
+      "id": "bibu_v2_focus_04",
+      "title": "安静学一个小知识",
+      "description": "方便时选择十五分钟学习，用已有资料即可。对方可以另选时间，结束后回任务页自行确认。",
+      "task_type": "focus",
+      "action_type": "focus",
+      "category": "安静陪伴",
+      "prompt_hint": "一个概念、一小段教程都可以。"
+    },
+    {
+      "id": "bibu_v2_focus_05",
+      "title": "把一件小创作留给十五分钟",
+      "description": "用十五分钟写几句话、画几笔或整理灵感；可自行计时，不上传成果也能自行确认。",
+      "task_type": "focus",
+      "action_type": "focus",
+      "category": "安静陪伴",
+      "prompt_hint": "给一个没成形的想法留一点空间。"
+    },
+    {
+      "id": "bibu_v2_focus_06",
+      "title": "给自己的兴趣十五分钟",
+      "description": "选一件不需要额外消费的兴趣，各自安排时间。可用专注页计时，结束后回任务页自行确认。",
+      "task_type": "focus",
+      "action_type": "focus",
+      "category": "安静陪伴",
+      "prompt_hint": "翻翻已有的照片，或者继续一个小手工。"
+    },
+    {
+      "id": "bibu_v2_focus_07",
+      "title": "各自完成一段安静时光",
+      "description": "双方不必做相同的事，也不用同时开始。方便时各用十五分钟做自己的事，结束后自行确认。",
+      "task_type": "focus",
+      "action_type": "focus",
+      "category": "安静陪伴",
+      "prompt_hint": "你读书，我整理东西，也算一种陪伴。"
+    }
+  ],
+  "editorial": {
+    "bibu_v2_express_01": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_express_02": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_express_03": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_express_04": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_express_05": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_express_06": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_express_07": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_today_01": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_today_02": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_today_03": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_today_04": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_today_05": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_today_06": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_today_07": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_know_01": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_know_02": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_know_03": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_know_04": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_know_05": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_know_06": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_know_07": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_memory_01": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_memory_02": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_memory_03": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_memory_04": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_memory_05": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_memory_06": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_memory_07": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_photo_01": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_photo_02": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_photo_03": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_photo_04": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_photo_05": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_photo_06": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_photo_07": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_play_01": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_play_02": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_play_03": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_play_04": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_play_05": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_play_06": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_play_07": {
+      "estimated_minutes": [
+        1,
+        2
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_together_01": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_together_02": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_together_03": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_together_04": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_together_05": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_together_06": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_together_07": {
+      "estimated_minutes": [
+        1,
+        3
+      ],
+      "energy": "low",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "partner_visible_on_submit",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_focus_01": {
+      "estimated_minutes": [
+        15,
+        15
+      ],
+      "energy": "medium",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space",
+        "opt_in_15_minute_tasks"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_focus_02": {
+      "estimated_minutes": [
+        15,
+        15
+      ],
+      "energy": "medium",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space",
+        "opt_in_15_minute_tasks"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_focus_03": {
+      "estimated_minutes": [
+        15,
+        15
+      ],
+      "energy": "medium",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space",
+        "opt_in_15_minute_tasks"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_focus_04": {
+      "estimated_minutes": [
+        15,
+        15
+      ],
+      "energy": "medium",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space",
+        "opt_in_15_minute_tasks"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_focus_05": {
+      "estimated_minutes": [
+        15,
+        15
+      ],
+      "energy": "medium",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space",
+        "opt_in_15_minute_tasks"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_focus_06": {
+      "estimated_minutes": [
+        15,
+        15
+      ],
+      "energy": "medium",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space",
+        "opt_in_15_minute_tasks"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    },
+    "bibu_v2_focus_07": {
+      "estimated_minutes": [
+        15,
+        15
+      ],
+      "energy": "medium",
+      "scenes": [
+        "same_city",
+        "long_distance"
+      ],
+      "synchronous_required": false,
+      "prerequisites": [
+        "paired_space",
+        "opt_in_15_minute_tasks"
+      ],
+      "completion_policy": "self_report",
+      "answer_visibility": "no_answer_field_current_ui",
+      "skip_copy": "今天不方便就先放下，不需要补做。",
+      "requires_purchase": false,
+      "requires_upload": false
+    }
+  },
+  "trial_28_day_schedule": [
+    {
+      "day": 1,
+      "template_id": "bibu_v2_express_01"
+    },
+    {
+      "day": 2,
+      "template_id": "bibu_v2_today_01"
+    },
+    {
+      "day": 3,
+      "template_id": "bibu_v2_play_01"
+    },
+    {
+      "day": 4,
+      "template_id": "bibu_v2_know_01"
+    },
+    {
+      "day": 5,
+      "template_id": "bibu_v2_together_01"
+    },
+    {
+      "day": 6,
+      "template_id": "bibu_v2_photo_01"
+    },
+    {
+      "day": 7,
+      "template_id": "bibu_v2_memory_01"
+    },
+    {
+      "day": 8,
+      "template_id": "bibu_v2_today_02"
+    },
+    {
+      "day": 9,
+      "template_id": "bibu_v2_express_02"
+    },
+    {
+      "day": 10,
+      "template_id": "bibu_v2_know_02"
+    },
+    {
+      "day": 11,
+      "template_id": "bibu_v2_play_02"
+    },
+    {
+      "day": 12,
+      "template_id": "bibu_v2_focus_01",
+      "fallback_template_id": "bibu_v2_know_05"
+    },
+    {
+      "day": 13,
+      "template_id": "bibu_v2_memory_02"
+    },
+    {
+      "day": 14,
+      "template_id": "bibu_v2_together_02"
+    },
+    {
+      "day": 15,
+      "template_id": "bibu_v2_today_03"
+    },
+    {
+      "day": 16,
+      "template_id": "bibu_v2_express_03"
+    },
+    {
+      "day": 17,
+      "template_id": "bibu_v2_photo_02"
+    },
+    {
+      "day": 18,
+      "template_id": "bibu_v2_know_03"
+    },
+    {
+      "day": 19,
+      "template_id": "bibu_v2_play_03"
+    },
+    {
+      "day": 20,
+      "template_id": "bibu_v2_memory_03"
+    },
+    {
+      "day": 21,
+      "template_id": "bibu_v2_together_03"
+    },
+    {
+      "day": 22,
+      "template_id": "bibu_v2_today_04"
+    },
+    {
+      "day": 23,
+      "template_id": "bibu_v2_express_04"
+    },
+    {
+      "day": 24,
+      "template_id": "bibu_v2_know_04"
+    },
+    {
+      "day": 25,
+      "template_id": "bibu_v2_play_04"
+    },
+    {
+      "day": 26,
+      "template_id": "bibu_v2_focus_02",
+      "fallback_template_id": "bibu_v2_know_06"
+    },
+    {
+      "day": 27,
+      "template_id": "bibu_v2_memory_04"
+    },
+    {
+      "day": 28,
+      "template_id": "bibu_v2_together_04"
+    }
+  ]
+}

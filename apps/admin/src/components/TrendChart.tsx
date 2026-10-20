@@ -1,9 +1,9 @@
+import { useEffect, useRef, useState } from 'react'
 import type { SeriesPoint } from '../lib/types'
 import { formatNumber, formatShortDay } from '../lib/format'
 
 export type TrendMetric = 'new_users' | 'new_couples' | 'mutual_spaces' | 'task_rate'
 
-const W = 760
 const H = 240
 const PAD = { top: 18, right: 22, bottom: 34, left: 48 }
 
@@ -23,6 +23,18 @@ export function TrendChart({
   metric: TrendMetric
   emptyText?: string
 }) {
+  const chartRef = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(760)
+  useEffect(() => {
+    const element = chartRef.current
+    if (!element) return
+    const observer = new ResizeObserver(([entry]) => {
+      setWidth(Math.max(280, Math.round(entry.contentRect.width)))
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [series.length])
+
   const values = series.map((point) => pointValue(point, metric))
   const finite = values.filter((value): value is number => value !== null)
   if (series.length === 0) {
@@ -30,7 +42,7 @@ export function TrendChart({
   }
   const rawMax = Math.max(...finite, metric === 'task_rate' ? 100 : 1)
   const max = metric === 'task_rate' ? 100 : Math.max(1, rawMax * 1.15)
-  const innerW = W - PAD.left - PAD.right
+  const innerW = width - PAD.left - PAD.right
   const innerH = H - PAD.top - PAD.bottom
   const stepX = series.length > 1 ? innerW / (series.length - 1) : 0
   const x = (index: number) => PAD.left + (series.length > 1 ? index * stepX : innerW / 2)
@@ -62,9 +74,9 @@ export function TrendChart({
     metric === 'task_rate' ? [0, 25, 50, 75, 100] : [0, 0.25, 0.5, 0.75, 1].map((p) => max * p)
 
   return (
-    <div className="trend-chart">
+    <div className="trend-chart" ref={chartRef}>
       <svg
-        viewBox={`0 0 ${W} ${H}`}
+        viewBox={`0 0 ${width} ${H}`}
         role="img"
         aria-label={`趋势图，共 ${series.length} 天，最高值 ${formatNumber(Math.max(...finite, 0))}${unit}`}
         preserveAspectRatio="none"
@@ -73,7 +85,7 @@ export function TrendChart({
           <g key={value}>
             <line
               x1={PAD.left}
-              x2={W - PAD.right}
+              x2={width - PAD.right}
               y1={y(value)}
               y2={y(value)}
               className="chart-grid"
@@ -85,6 +97,12 @@ export function TrendChart({
         ))}
         {segments.map((segment, index) => (
           <g key={index}>
+            {segment.length > 1 && (
+              <polygon
+                className="chart-area"
+                points={`${segment[0].x},${y(0)} ${segment.map((point) => `${point.x},${point.y}`).join(' ')} ${segment[segment.length - 1].x},${y(0)}`}
+              />
+            )}
             {segment.length > 1 && (
               <polyline
                 className="chart-line"
