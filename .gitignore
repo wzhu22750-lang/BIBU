@@ -1,6 +1,7 @@
 node_modules/
 dist-apk/
 dist/
+dist-admin/
 .env
 .env.*
 !.env.example

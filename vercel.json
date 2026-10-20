@@ -11,7 +11,12 @@
       "source": "/wechat-oauth/:path*",
       "destination": "https://zqwzdoejxsfscisudacu.supabase.co/functions/v1/wechat-auth/:path*"
     },
-    { "source": "/((?!assets/|demo/|favicon.svg).*)", "destination": "/index.html" }
+    { "source": "/admin", "destination": "/admin/index.html" },
+    {
+      "source": "/admin/((?!assets/|favicon.svg).*)",
+      "destination": "/admin/index.html"
+    },
+    { "source": "/((?!assets/|demo/|favicon.svg|admin/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

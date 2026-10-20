@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "supabase/functions/admin-api/*.ts",
+    "supabase/functions/_shared/diagnostics.ts",
+    "supabase/tests/admin_api.test.ts",
+    "supabase/tests/admin_api_sdk.test.ts",
+    "supabase/tests/push_diagnostics.test.ts"
+  ],
+  "exclude": ["supabase/functions/admin-api/index.ts"]
+}

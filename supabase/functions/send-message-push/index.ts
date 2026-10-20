@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { buildMessagePush, type MessagePushRecord } from '../_shared/messagePush.ts'
+import { recordDelivery, tokenSuffix } from '../_shared/diagnostics.ts'
 import {
   isInvalidCidError,
   parseGeTuiEnv,
@@ -23,6 +24,8 @@ Deno.serve(async (request) => {
   const secretHeader =
     request.headers.get('x-bibu-webhook-secret') || request.headers.get('x-bibo-webhook-secret')
   if (!expected || secretHeader !== expected) return json({ error: 'Webhook 未授权' }, 401)
+  const requestId = crypto.randomUUID()
+  const startedAt = Date.now()
   const url = Deno.env.get('SUPABASE_URL'),
     service = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),
     getui = parseGeTuiEnv(Deno.env.toObject())
@@ -56,18 +59,63 @@ Deno.serve(async (request) => {
     .eq('couple_id', record.couple_id)
   if (memberError) return json({ error: '读取空间成员失败', details: memberError.message }, 502)
   const partner = members?.find((row) => row.user_id !== verifiedRecord.sender_id)?.user_id
-  if (!partner) return json({ sent: 0, skipped: '没有另一位成员' }, 200)
+  if (!partner) {
+    await recordDelivery(admin, {
+      requestId,
+      eventType: 'message',
+      eventId: verifiedRecord.id,
+      coupleId: verifiedRecord.couple_id,
+      recipientUserId: null,
+      stage: 'skipped',
+      errorCode: 'no_partner',
+      durationMs: Date.now() - startedAt,
+    })
+    return json({ sent: 0, skipped: '没有另一位成员' }, 200)
+  }
   const { data: devices, error: deviceError } = await admin
     .from('device_installations')
     .select('token')
     .eq('user_id', partner)
     .eq('platform', 'android')
   if (deviceError) return json({ error: '读取 Push 设备失败', details: deviceError.message }, 502)
-  if (!devices?.length) return json({ sent: 0, skipped: '对方没有登记 Android Push 设备' }, 200)
+  if (!devices?.length) {
+    await recordDelivery(admin, {
+      requestId,
+      eventType: 'message',
+      eventId: verifiedRecord.id,
+      coupleId: verifiedRecord.couple_id,
+      recipientUserId: partner,
+      stage: 'skipped',
+      errorCode: 'no_device',
+      durationMs: Date.now() - startedAt,
+    })
+    return json({ sent: 0, skipped: '对方没有登记 Android Push 设备' }, 200)
+  }
   const targets = devices.filter(
     (device) => typeof device.token === 'string' && device.token.length >= 20,
   )
-  if (!targets.length) return json({ sent: 0, skipped: '对方没有有效 Android Push Token' }, 200)
+  if (!targets.length) {
+    await recordDelivery(admin, {
+      requestId,
+      eventType: 'message',
+      eventId: verifiedRecord.id,
+      coupleId: verifiedRecord.couple_id,
+      recipientUserId: partner,
+      stage: 'skipped',
+      errorCode: 'no_valid_token',
+      durationMs: Date.now() - startedAt,
+    })
+    return json({ sent: 0, skipped: '对方没有有效 Android Push Token' }, 200)
+  }
+  await recordDelivery(admin, {
+    requestId,
+    eventType: 'message',
+    eventId: verifiedRecord.id,
+    coupleId: verifiedRecord.couple_id,
+    recipientUserId: partner,
+    stage: 'webhook_received',
+    durationMs: Date.now() - startedAt,
+  })
   console.log(
     `[send-message-push] Message ${verifiedRecord.id} -> Partner ${partner} (${targets.length} targets)`,
   )
@@ -82,25 +130,76 @@ Deno.serve(async (request) => {
     failed = 0
   for (const device of targets) {
     const cid = device.token as string
+    const attemptStarted = Date.now()
     let result: { ok: boolean; status: number; text: string }
     try {
       result = await sendGeTuiTransmission(getui, cid, { ...payload })
-    } catch (error) {
+    } catch {
       failed++
-      console.error(`[send-message-push] CID ${cid.slice(0, 10)}... 发送异常: ${String(error)}`)
+      console.error(
+        `[send-message-push] Message ${verifiedRecord.id} 发送异常，CID 末尾 ${tokenSuffix(cid)}`,
+      )
+      await recordDelivery(admin, {
+        requestId,
+        eventType: 'message',
+        eventId: verifiedRecord.id,
+        coupleId: verifiedRecord.couple_id,
+        recipientUserId: partner,
+        tokenSuffix: tokenSuffix(cid),
+        stage: 'provider_rejected',
+        errorCode: 'network_error',
+        durationMs: Date.now() - attemptStarted,
+      })
       continue
     }
     console.log(
-      `[send-message-push] CID ${cid.slice(0, 10)}... status: ${result.status}, ok: ${result.ok}, text: ${result.text.slice(0, 200)}`,
+      `[send-message-push] Message ${verifiedRecord.id} CID 末尾 ${tokenSuffix(cid)} status: ${result.status}, ok: ${result.ok}`,
     )
     if (result.ok) {
       sent++
+      await recordDelivery(admin, {
+        requestId,
+        eventType: 'message',
+        eventId: verifiedRecord.id,
+        coupleId: verifiedRecord.couple_id,
+        recipientUserId: partner,
+        tokenSuffix: tokenSuffix(cid),
+        stage: 'provider_accepted',
+        providerHttpStatus: result.status,
+        durationMs: Date.now() - attemptStarted,
+      })
       continue
     }
     if (isInvalidCidError(result.status, result.text)) {
       invalid++
+      await recordDelivery(admin, {
+        requestId,
+        eventType: 'message',
+        eventId: verifiedRecord.id,
+        coupleId: verifiedRecord.couple_id,
+        recipientUserId: partner,
+        tokenSuffix: tokenSuffix(cid),
+        stage: 'invalid_token',
+        errorCode: 'invalid_cid',
+        providerHttpStatus: result.status,
+        durationMs: Date.now() - attemptStarted,
+      })
       await admin.from('device_installations').delete().eq('user_id', partner).eq('token', cid)
-    } else failed++
+    } else {
+      failed++
+      await recordDelivery(admin, {
+        requestId,
+        eventType: 'message',
+        eventId: verifiedRecord.id,
+        coupleId: verifiedRecord.couple_id,
+        recipientUserId: partner,
+        tokenSuffix: tokenSuffix(cid),
+        stage: 'provider_rejected',
+        errorCode: `getui_http_${result.status}`,
+        providerHttpStatus: result.status,
+        durationMs: Date.now() - attemptStarted,
+      })
+    }
   }
   if (failed > 0)
     return json({ sent, invalid, failed, error: '部分个推请求失败；可由数据库 Webhook 重试' }, 502)

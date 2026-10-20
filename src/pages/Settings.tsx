@@ -1,6 +1,7 @@
 import { InactiveEventOutbox } from '../components/InactiveEventOutbox'
 import { downloadSpace } from '../lib/spaceExport'
 import { PushRegistrationPanel } from '../components/PushRegistrationPanel'
+import { SupportFeedback } from '../components/SupportFeedback'
 import { SettingsNote } from '../components/SettingsNote'
 import { AccountDeletion } from '../components/AccountDeletion'
 import { InactiveOutbox } from '../components/InactiveOutbox'
@@ -440,6 +441,8 @@ export function Settings({
         <div className="cartridge-col">
           {/* === CARD 3: 想念信报箱（个推实时推送与反馈） === */}
           <PushRegistrationPanel controller={controller} sound={sound} setSound={setSound} />
+
+          {!demo && <SupportFeedback />}
 
           {/* === CARD 4: 空间保险箱与系统设置 === */}
           <div className="retro-cartridge">

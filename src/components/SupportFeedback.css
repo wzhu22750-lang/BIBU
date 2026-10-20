@@ -1,0 +1,374 @@
+/* 帮助与反馈：沿用空间设置卡片风格，信息密度优先。 */
+
+.support-body {
+  gap: 13px;
+}
+
+.support-lead {
+  margin: 0;
+  color: #5b6650;
+  font-size: 11.5px;
+  line-height: 1.65;
+}
+
+.support-form {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 13px;
+  border-bottom: 1px dashed #d5deca;
+}
+
+.support-form label,
+.support-reply label {
+  display: grid;
+  gap: 5px;
+  color: #445233;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.support-form textarea,
+.support-form select,
+.support-reply textarea {
+  width: 100%;
+  border: 1.5px solid #20211d;
+  border-radius: 0;
+  background: #fffef7;
+  padding: 7px 9px;
+  color: #20211d;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+  outline: none;
+}
+
+.support-form textarea:focus,
+.support-form select:focus,
+.support-reply textarea:focus {
+  box-shadow: 3px 3px 0 #04bcf0;
+}
+
+.support-form-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.support-form-top label {
+  flex: 1;
+}
+
+.support-counter {
+  flex: none;
+  padding-bottom: 7px;
+  color: #7b8473;
+  font-family: var(--pixel, monospace);
+  font-size: 9px;
+}
+
+.support-counter.over {
+  color: #a02434;
+}
+
+.support-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin: 0;
+  color: #66705b;
+  font-size: 10.5px;
+  line-height: 1.6;
+}
+
+.support-privacy .icon {
+  flex: none;
+  margin-top: 2px;
+}
+
+.support-form > .button {
+  justify-self: start;
+}
+
+.support-history {
+  display: grid;
+  gap: 8px;
+}
+
+.support-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #445233;
+  font-size: 11.5px;
+}
+
+.support-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #355f48;
+  font-size: 10.5px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.support-refresh:disabled {
+  color: #8a927f;
+}
+
+.support-empty {
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px dashed #d5deca;
+  background: #f8f6ed;
+  color: #6d7665;
+  font-size: 10.8px;
+  line-height: 1.6;
+}
+
+.support-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 8px 10px;
+  border: 1px solid #e2b6b6;
+  background: #fff1f1;
+  color: #8f2d2d;
+  font-size: 10.8px;
+  line-height: 1.55;
+}
+
+.support-error button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #8f2d2d;
+  font-size: 10.8px;
+  text-decoration: underline;
+}
+
+.support-ticket-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.support-ticket {
+  position: relative;
+  border: 1px solid #d5deca;
+  background: #fffdf7;
+}
+
+.support-ticket.open {
+  border-color: #20211d;
+}
+
+.support-ticket-head {
+  display: block;
+  width: 100%;
+  padding: 8px 25px 8px 10px;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+
+.support-ticket-head:hover {
+  background: #fffbe2;
+}
+
+.support-ticket-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 7px;
+}
+
+.support-ticket-title .mono {
+  font-size: 10.2px;
+  font-weight: 700;
+}
+
+.support-status {
+  padding: 0 5px;
+  border: 1px solid #c9d3bf;
+  font-size: 9.2px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.status-pending {
+  border-color: #e6d479;
+  background: #fff3b0;
+  color: #6b5300;
+}
+
+.status-in_progress {
+  border-color: #a8dcf0;
+  background: #dff5ff;
+  color: #055a78;
+}
+
+.status-waiting_user {
+  border-color: #e7b3dc;
+  background: #ffeaf9;
+  color: #8a276f;
+}
+
+.status-resolved {
+  border-color: #9ed9b9;
+  background: #ddf8e8;
+  color: #0b6b43;
+}
+
+.support-ticket-meta {
+  display: block;
+  margin-top: 2px;
+  color: #79816f;
+  font-size: 9.8px;
+}
+
+.support-ticket-excerpt {
+  display: -webkit-box;
+  margin-top: 3px;
+  overflow: hidden;
+  color: #4a5440;
+  font-size: 11px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.support-chevron {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  color: #7b8473;
+  font-size: 11px;
+}
+
+.support-detail {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  border-top: 1px dashed #d5deca;
+  background: #fbfaf3;
+}
+
+.support-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  color: #79816f;
+  font-size: 9.8px;
+}
+
+.support-description {
+  margin: 0;
+  padding-left: 8px;
+  border-left: 2px solid #b8c2ad;
+  color: #37402f;
+  font-size: 11.2px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.support-thread {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.support-message {
+  padding: 6px 8px;
+  border-left: 3px solid #04bcf0;
+  background: #f5fbfd;
+}
+
+.support-message.from-admin {
+  border-left-color: #ffa6e8;
+  background: #fff7fc;
+}
+
+.support-message.from-system {
+  border-left-color: #b8c2ad;
+  background: #f4f4ed;
+}
+
+.support-message-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 3px 10px;
+  font-size: 10px;
+}
+
+.support-message-head time {
+  color: #79816f;
+  font-size: 9.5px;
+}
+
+.support-message p {
+  margin: 3px 0 0;
+  color: #37402f;
+  font-size: 11px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.support-reply {
+  display: grid;
+  gap: 8px;
+  padding-top: 9px;
+  border-top: 1px dashed #d5deca;
+}
+
+.support-reply .button {
+  justify-self: start;
+}
+
+.support-resolved-note {
+  margin: 0;
+  padding: 7px 9px;
+  background: #eff5e8;
+  color: #4f5e44;
+  font-size: 10.5px;
+  line-height: 1.6;
+}
+
+.support-retry-note {
+  margin: 0;
+  color: #7b8473;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.support-submit-error {
+  margin: 0;
+  color: #a02434;
+  font-size: 10.5px;
+  line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+  .support-form-top {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .support-counter {
+    padding-bottom: 0;
+    text-align: right;
+  }
+}

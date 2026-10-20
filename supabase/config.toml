@@ -5,3 +5,7 @@ verify_jwt = false
 
 [functions.wechat-oauth]
 verify_jwt = false
+
+# 管理 API 在函数内部校验 JWT、会话、MFA 与角色能力，并处理 CORS 预检。
+[functions.admin-api]
+verify_jwt = false
