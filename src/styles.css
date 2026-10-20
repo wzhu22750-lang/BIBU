@@ -1705,13 +1705,28 @@ img {
   height: min(680px, calc(100dvh - 245px));
   min-height: 420px;
 }
+.app-shell-chat {
+  height: var(--chat-viewport-height, 100dvh);
+  min-height: 0;
+}
+.main-wrap.page-wrap-chat {
+  height: calc(var(--chat-viewport-height, 100dvh) - var(--safe-top, 0px));
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.main-wrap.page-wrap-chat > .topbar {
+  flex-shrink: 0;
+}
 .main-wrap > main.page-chat {
   padding: 0;
   margin: 0;
   max-width: none;
   min-height: 0;
   flex: 1 1 0%;
-  height: 100%;
+  height: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -1719,9 +1734,9 @@ img {
   display: none;
 }
 .page-chat .chat-window {
-  flex: 1;
+  flex: 1 1 0%;
   width: 100%;
-  height: 100%;
+  height: auto;
   min-height: 0;
   max-height: 100%;
   border-radius: 0;
@@ -1750,6 +1765,8 @@ img {
 }
 .chat-messages {
   flex: 1;
+  min-height: 0;
+  overflow-anchor: none;
   overflow: auto;
   padding: 22px;
   overscroll-behavior: contain;
@@ -1815,6 +1832,7 @@ img {
   background: var(--green);
 }
 .chat-composer {
+  flex-shrink: 0;
   border-top: var(--line);
   background: #fffef7;
   padding: 16px 19px 11px;
@@ -1826,7 +1844,8 @@ img {
 }
 .composer-main textarea {
   flex: 1;
-  resize: vertical;
+  resize: none;
+  overflow-y: auto;
   min-height: 43px;
   max-height: 120px;
   line-height: 1.7;
@@ -5817,14 +5836,15 @@ img {
   .lightbox-caption span {
     font-size: 10px;
   }
+  .app-shell-chat .bottom-nav.bibo-dock {
+    bottom: var(--chat-keyboard-inset, 0px);
+  }
   .main-wrap.page-wrap-chat {
-    min-height: calc(
-      100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px))
+    height: calc(
+      var(--chat-viewport-height, 100dvh) - var(--safe-top, 0px) -
+        var(--app-nav, var(--dock-actual-height, 78px))
     );
-    height: calc(100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px)));
-    max-height: calc(
-      100dvh - var(--safe-top, 0px) - var(--app-nav, var(--dock-actual-height, 78px))
-    );
+    min-height: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -5848,9 +5868,9 @@ img {
     display: none;
   }
   .page-chat .chat-window {
-    flex: 1;
+    flex: 1 1 0%;
     width: 100%;
-    height: 100%;
+    height: auto;
     min-height: 0;
     max-height: 100%;
     border-radius: 0;
@@ -5859,7 +5879,7 @@ img {
   }
   .chat-messages {
     flex: 1 1 0%;
-    min-height: 60px;
+    min-height: 0;
     padding: 15px 12px;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -5894,7 +5914,7 @@ img {
   }
   .composer-main textarea {
     padding: 9px 10px;
-    font-size: 13px;
+    font-size: 16px;
     line-height: 1.4;
     resize: none;
     border-radius: 6px;

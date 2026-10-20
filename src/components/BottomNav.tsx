@@ -50,7 +50,8 @@ export function BottomNav({
     }
     updateHeight()
     const observer = new ResizeObserver(updateHeight)
-    observer.observe(el)
+    // Include safe-area padding in the height reserved by the chat page.
+    observer.observe(el, { box: 'border-box' })
     window.addEventListener('resize', updateHeight)
     return () => {
       observer.disconnect()

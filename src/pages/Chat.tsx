@@ -52,6 +52,15 @@ function SmileyIcon({ size = 18 }: { size?: number }) {
   )
 }
 
+function resizeInput(el: HTMLTextAreaElement) {
+  // scrollHeight includes padding but excludes borders. Let CSS enforce the
+  // maximum so system large-font settings keep their larger input allowance.
+  el.style.height = 'auto'
+  const style = getComputedStyle(el)
+  const borders = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth)
+  el.style.height = `${el.scrollHeight + borders}px`
+}
+
 // 快捷短语：像素图形 + 纯文本，不依赖 emoji 字符
 const QUICK_REACTIONS = [
   { art: 'heart', text: '喜欢你' },
@@ -80,8 +89,7 @@ export function Chat({
     [draft, setDraft] = useState<DraftSnapshot>(() => readChatDraft(space.me.id, space.couple!.id)),
     [memory, setMemory] = useState<Photo | null>(null),
     [emoji, setEmoji] = useState(false),
-    { busy, run } = useTask(),
-    end = useRef<HTMLDivElement>(null)
+    { busy, run } = useTask()
   const text = draft.text
   const draftRef = useRef(draft)
   draftRef.current = draft
@@ -139,34 +147,56 @@ export function Chat({
       anchor.current = null
     }
   }, [messages.length, history.busy])
-  useEffect(() => {
-    if (referenceId) return
-    if (nearBottom.current) end.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' })
-    else setUnread(true)
-  }, [space.messages.at(-1)?.id, referenceId])
   useLayoutEffect(() => {
-    const el = scroll.current
-    if (el && !referenceId) {
-      el.scrollTop = el.scrollHeight
-    }
+    if (referenceId) return
+    const container = scroll.current
+    if (container && nearBottom.current) container.scrollTop = container.scrollHeight
+    else setUnread(true)
+  }, [messages.at(-1)?.id, referenceId])
+  useLayoutEffect(() => {
+    const container = scroll.current
+    if (!container) return
+    if (!referenceId) container.scrollTop = container.scrollHeight
+    // Keyboard, composer and quick-phrase changes resize the message viewport.
+    // Keep the latest message visible only while the reader is already there.
+    const observer = new ResizeObserver(() => {
+      if (nearBottom.current && !anchor.current && !referenceId) {
+        container.scrollTop = container.scrollHeight
+      }
+    })
+    observer.observe(container)
+    return () => observer.disconnect()
   }, [referenceId])
+
+  useLayoutEffect(() => {
+    if (input.current) resizeInput(input.current)
+  }, [text])
 
   useLayoutEffect(() => {
     const el = input.current
     if (!el) return
-    el.style.height = 'auto'
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px'
-  }, [text])
-
-  useEffect(() => {
-    const handleResize = () => {
-      const el = input.current
-      if (!el) return
-      el.style.height = 'auto'
-      el.style.height = Math.min(el.scrollHeight, 120) + 'px'
+    let width = el.getBoundingClientRect().width
+    const resize = () => resizeInput(el)
+    const observer = new ResizeObserver(() => {
+      const nextWidth = el.getBoundingClientRect().width
+      if (nextWidth !== width) {
+        width = nextWidth
+        resize()
+      }
+    })
+    observer.observe(el)
+    // System font changes can reflow the draft without changing its width.
+    const fontScaleObserver = new MutationObserver(resize)
+    fontScaleObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-fs'],
+    })
+    document.fonts.addEventListener('loadingdone', resize)
+    return () => {
+      observer.disconnect()
+      fontScaleObserver.disconnect()
+      document.fonts.removeEventListener('loadingdone', resize)
     }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   function submit() {
@@ -181,14 +211,12 @@ export function Chat({
       draftRef.current = next
       setDraft(next)
       if (!next.text) {
-        if (input.current) input.current.style.height = 'auto'
         try {
           clearChatDraft(space.me.id, space.couple!.id)
         } catch {
           /* Optional cleanup. */
         }
       }
-      input.current?.focus()
     })
   }
   return (
@@ -299,13 +327,13 @@ export function Chat({
               </div>
             )
           })}
-          <div ref={end} />
         </div>
         {unread && (
           <Button
             tone="yellow"
             onClick={() => {
-              end.current?.scrollIntoView({ block: 'nearest' })
+              const container = scroll.current
+              if (container) container.scrollTop = container.scrollHeight
               nearBottom.current = true
               setUnread(false)
             }}
@@ -315,6 +343,17 @@ export function Chat({
         )}
         <form
           className="chat-composer"
+          onPointerDown={(e) => {
+            // A pointer tap on a composer control must not close the keyboard
+            // before its click runs. Keyboard navigation keeps normal focus.
+            if (
+              document.activeElement === input.current &&
+              e.target instanceof Element &&
+              e.target.closest('button')
+            ) {
+              e.preventDefault()
+            }
+          }}
           onSubmit={(e) => {
             e.preventDefault()
             submit()
@@ -328,7 +367,7 @@ export function Chat({
                   key={item.text}
                   onClick={() => {
                     editText((t) => (t + item.text).slice(0, 2000))
-                    input.current?.focus()
+                    input.current?.focus({ preventScroll: true })
                   }}
                 >
                   <EventArt value={item.art} size={20} />

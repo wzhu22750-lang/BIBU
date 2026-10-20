@@ -1,3 +1,4 @@
+import { useChatViewport } from '../hooks/useChatViewport'
 import { BottomNav } from './BottomNav'
 import type { BibuAction } from '../hooks/useBibu'
 import type { ReactNode } from 'react'
@@ -29,8 +30,9 @@ export function Shell({
   bibu: BibuAction
   children: ReactNode
 }) {
+  const viewportRef = useChatViewport(page === 'chat')
   return (
-    <div className="app-shell">
+    <div ref={viewportRef} className={`app-shell${page === 'chat' ? ' app-shell-chat' : ''}`}>
       <aside className="sidebar">
         <button className="brand" onClick={() => navigate('home')} aria-label="BIBU！首页">
           <span className="brand-word">
