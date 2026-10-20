@@ -64,7 +64,7 @@ export function detailId(path: string, prefix: string): string | null {
 
 /** Only allow a local list route as the return destination. */
 export function listReturnHref(value: string | null, fallback: string): string {
-  if (!value || !/^#\/(users|couples|tickets|diagnostics|overview)(?:\?|$)/.test(value)) {
+  if (!value || !/^#\/(users|couples|tickets|diagnostics|overview|data)(?:\?|$)/.test(value)) {
     return routeHref(fallback)
   }
   return value

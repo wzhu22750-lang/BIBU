@@ -84,8 +84,8 @@ export function DiagnosticsPage({ route }: { route: RouteState }) {
     <>
       <PageHeader
         eyebrow="互动与通知诊断"
-        title="推送到底走到哪一步？"
-        description="诊断只回答服务端是否写入、个推是否接受、设备是否无效。没有客户端送达或用户打开回执时，不会把它们写成“已送达”。"
+        title="通知诊断"
+        description="按事件定位通知，查看投递尝试与失败原因。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
             刷新
@@ -267,7 +267,7 @@ export function DiagnosticsPage({ route }: { route: RouteState }) {
                         >
                           <td>
                             <strong>{row.event_type === 'message' ? '消息' : '提醒'}</strong>
-                            <small className="block-muted mono">{row.event_id.slice(0, 8)}…</small>
+                            <small className="block-muted mono">{row.event_id}</small>
                           </td>
                           <td onClick={(event) => event.stopPropagation()}>
                             <button
@@ -275,10 +275,10 @@ export function DiagnosticsPage({ route }: { route: RouteState }) {
                               className="inline-link"
                               onClick={() => navigate(`/couples/${row.couple_id}`, { from, to })}
                             >
-                              {row.couple_id.slice(0, 8)}…
+                              {row.couple_id}
                             </button>
                             <small className="block-muted mono">
-                              发送者 {row.sender_id ? `${row.sender_id.slice(0, 8)}…` : '系统'}
+                              发送者 {row.sender_id ? `${row.sender_id}` : '系统'}
                             </small>
                           </td>
                           <td>{formatDateTime(row.created_at)}</td>
@@ -320,7 +320,7 @@ export function DiagnosticsPage({ route }: { route: RouteState }) {
                                 <div className="attempt-head">
                                   <strong>投递尝试明细</strong>
                                   <CopyButton
-                                    label="复制脱敏排障摘要"
+                                    label="复制排障摘要"
                                     value={[
                                       `事件：${row.event_type} / ${row.event_id}`,
                                       `空间：${row.couple_id}`,
@@ -368,7 +368,7 @@ export function DiagnosticsPage({ route }: { route: RouteState }) {
                                             <td>{formatDuration(attempt.duration_ms)}</td>
                                             <td className="mono">
                                               {attempt.recipient_user_id
-                                                ? `${attempt.recipient_user_id.slice(0, 8)}…`
+                                                ? `${attempt.recipient_user_id}`
                                                 : '—'}
                                             </td>
                                             <td>{attempt.device_platform || '—'}</td>

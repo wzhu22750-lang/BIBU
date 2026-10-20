@@ -98,7 +98,7 @@ export function AuditPage({ route }: { route: RouteState }) {
     <>
       <PageHeader
         eyebrow="审计日志"
-        title="谁做了什么，为什么，结果如何"
+        title="操作日志"
         description="管理写操作、失败尝试与初始化动作都会留下记录。普通管理 API 不能修改或删除审计；数据库触发器也拒绝更新与删除，但这不是加密不可篡改存证。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
@@ -249,7 +249,7 @@ export function AuditPage({ route }: { route: RouteState }) {
                           </td>
                           <td>
                             <span className="copy-row">
-                              <span className="mono">{row.request_id.slice(0, 14)}…</span>
+                              <span className="mono">{row.request_id}</span>
                               <CopyButton value={row.request_id} label="复制" />
                             </span>
                           </td>

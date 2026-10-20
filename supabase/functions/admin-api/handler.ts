@@ -552,6 +552,60 @@ async function readRoute(
     return jsonResponse({ data, request_id: ctx.requestId }, 200, ctx.requestId, ctx.origin)
   }
 
+  if (path === '/data') {
+    requireCapability(ctx, 'data.read')
+    const data = await callRpc(options, 'admin_read_records', {
+      p_actor: ctx.userId,
+      p_entity: enumParam(
+        params,
+        'entity',
+        [
+          'profiles',
+          'couples',
+          'couple_members',
+          'messages',
+          'pings',
+          'photos',
+          'events',
+          'daily_tasks',
+          'daily_task_completions',
+          'focus_sessions',
+        ],
+        'messages',
+      ),
+      p_couple_id: params.get('couple_id')
+        ? requireUuid(params.get('couple_id'), 'couple_id')
+        : null,
+      p_user_id: params.get('user_id') ? requireUuid(params.get('user_id'), 'user_id') : null,
+      p_query: limitedParam(params, 'query', 100),
+      p_page: page,
+      p_page_size: pageSize,
+      p_request_id: ctx.requestId,
+    })
+    return jsonResponse({ data, request_id: ctx.requestId }, 200, ctx.requestId, ctx.origin)
+  }
+  const photoId = routeId(path, '/data/photos/', '/image')
+  if (photoId) {
+    requireCapability(ctx, 'data.read')
+    if (!isUuid(photoId)) throw new ApiError(404, 'not_found')
+    const photoPath = await callRpc<string | null>(options, 'admin_photo_path', {
+      p_actor: ctx.userId,
+      p_photo_id: photoId,
+      p_request_id: ctx.requestId,
+    })
+    if (!photoPath) throw new ApiError(404, 'not_found')
+    if (!options.client.signPhoto) throw new ApiError(503, 'not_ready')
+    const result = await options.client.signPhoto(photoPath)
+    if (result.error || !result.url)
+      throw new ApiError(502, 'server_error', '照片暂时无法加载，请重试')
+    return jsonResponse(
+      { data: { url: result.url, expires_in: 300 }, request_id: ctx.requestId },
+      200,
+      ctx.requestId,
+      ctx.origin,
+    )
+  }
+
   if (path === '/tickets') {
     requireCapability(ctx, 'tickets.read')
     const data = await callRpc(options, 'admin_list_tickets', {

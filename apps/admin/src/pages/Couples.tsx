@@ -18,7 +18,6 @@ import {
   PageHeader,
   Pagination,
   Panel,
-  PrivacyNote,
   StateView,
   StatusPill,
 } from '../components/ui'
@@ -153,8 +152,8 @@ export function CouplesPage({ route }: { route: RouteState }) {
     <>
       <PageHeader
         eyebrow="双人空间"
-        title="关系与互动"
-        description="按活跃日期窗口查看空间规模、互动与任务完成情况。只统计数据，不展示聊天正文、任务答案、照片原图或签名地址。"
+        title="双人空间"
+        description="查看成员关系、互动表现与空间内的业务记录。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
             刷新
@@ -281,11 +280,6 @@ export function CouplesPage({ route }: { route: RouteState }) {
         )}
       </Panel>
 
-      <PrivacyNote>
-        双向互动表示：空间当前恰好 2
-        人，且两人在所选窗口内各至少有一次消息、提醒、任务完成或照片写入服务端。
-      </PrivacyNote>
-
       <Panel
         title="空间列表"
         subtitle={
@@ -340,7 +334,7 @@ export function CouplesPage({ route }: { route: RouteState }) {
                           >
                             <strong>{couple.name || '未命名空间'}</strong>
                           </a>
-                          <small className="mono">{couple.id.slice(0, 8)}…</small>
+                          <small className="mono">{couple.id}</small>
                           <div className="member-chips">
                             {couple.members.map((member) => (
                               <span key={member.user_id} className="member-chip">

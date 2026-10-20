@@ -52,6 +52,7 @@ export function TicketDetailPage({ route }: { route: RouteState }) {
   const replyReason = draft.reason
   const setReplyBody = (body: string) => setDraft((value) => ({ ...value, body }))
   const setReplyReason = (reason: string) => setDraft((value) => ({ ...value, reason }))
+  const [composeMode, setComposeMode] = useState<'reply' | 'note'>('reply')
   const [noteBody, setNoteBody] = useState('')
   const [statusReason, setStatusReason] = useState('')
   const [assignReason, setAssignReason] = useState('')
@@ -176,7 +177,7 @@ export function TicketDetailPage({ route }: { route: RouteState }) {
       <PageHeader
         eyebrow="工单详情"
         title={detail ? `${detail.ticket_no} · ${detail.user_name}` : '反馈工单'}
-        description="仅显示用户主动提交的工单内容。内部备注不会同步到用户端；本页不会发送邮件或短信。"
+        description="阅读反馈、回复用户并跟进处理进度。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
             刷新
@@ -195,288 +196,324 @@ export function TicketDetailPage({ route }: { route: RouteState }) {
         <StateView kind="loading" />
       ) : (
         <>
-          <div className="split-grid">
-            <Panel title="工单信息">
-              <DetailGrid
-                columns={2}
-                items={[
-                  {
-                    label: '状态',
-                    value: (
-                      <StatusPill tone={detailStatusTone(detail.status)}>
-                        {ticketStatusLabels[detail.status]}
-                      </StatusPill>
-                    ),
-                  },
-                  { label: '分类', value: ticketCategoryLabels[detail.category] },
-                  { label: '处理人', value: detail.assignee_name || '未指派' },
-                  { label: '创建时间', value: formatDateTime(detail.created_at) },
-                  { label: '最近更新', value: formatDateTime(detail.updated_at) },
-                  { label: '解决时间', value: formatDateTime(detail.resolved_at) },
-                  {
-                    label: '用户',
-                    value: (
-                      <button
-                        type="button"
-                        className="inline-link"
-                        onClick={() => navigate(`/users/${detail.user_id}`)}
-                      >
-                        {detail.user_name} · {detail.email_masked || '无邮箱'}
-                      </button>
-                    ),
-                  },
-                  {
-                    label: '关联空间',
-                    value: detail.couple_id ? (
-                      <button
-                        type="button"
-                        className="inline-link"
-                        onClick={() => navigate(`/couples/${detail.couple_id}`)}
-                      >
-                        {detail.couple_id.slice(0, 8)}…
-                      </button>
-                    ) : (
-                      '未关联'
-                    ),
-                  },
-                  {
-                    label: '客户端',
-                    value:
-                      [detail.client_platform, detail.client_app_version]
-                        .filter(Boolean)
-                        .join(' · ') || '未上报',
-                  },
-                  {
-                    label: '工单 ID',
-                    value: (
-                      <span className="copy-row">
-                        <span className="mono">{detail.id}</span>
-                        <CopyButton value={detail.id} label="复制" />
-                      </span>
-                    ),
-                  },
-                ]}
-              />
-            </Panel>
+          <div className="ticket-layout">
+            <div className="ticket-main">
+              <Panel title="用户描述" subtitle="用户提交时的原始描述，不做自动改写">
+                <p className="ticket-description">{detail.description}</p>
+              </Panel>
 
-            <Panel
-              title="处理动作"
-              subtitle={
-                canWrite
-                  ? '所有写操作均需理由与幂等键，并写入审计日志'
-                  : '当前角色只能查看，不能回复或变更状态'
-              }
-            >
-              {canWrite ? (
-                <div className="action-stack">
-                  <form className="mini-form" onSubmit={submitStatus}>
-                    <label className="field">
-                      <span className="field-label">变更状态</span>
-                      <select
-                        value={pendingStatus}
-                        onChange={(event) =>
-                          setPendingStatus(event.target.value as TicketStatus | '')
-                        }
-                      >
-                        <option value="">选择目标状态</option>
-                        {NEXT_STATUS[detail.status].map((next) => (
-                          <option key={next} value={next}>
-                            {ticketStatusLabels[next]}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="field">
-                      <span className="field-label">变更理由</span>
-                      <input
-                        value={statusReason}
-                        maxLength={300}
-                        placeholder="例如：已确认问题并给出修复时间"
-                        onChange={(event) => setStatusReason(event.target.value)}
-                      />
-                    </label>
-                    <Button type="submit" size="sm" loading={busy === 'status'}>
-                      更新状态
-                    </Button>
-                  </form>
-
-                  <form
-                    className="mini-form"
-                    onSubmit={(event) => {
-                      event.preventDefault()
-                      submitAssign(assignee || undefined)
-                    }}
-                  >
-                    <label className="field">
-                      <span className="field-label">指派处理人</span>
-                      {canManageAdmins ? (
-                        <select
-                          value={assignee}
-                          onChange={(event) => setAssignee(event.target.value)}
-                        >
-                          <option value="">指派给我自己</option>
-                          {(adminsState.data?.rows || [])
-                            .filter(
-                              (admin) =>
-                                admin.status === 'active' &&
-                                admin.user_id !== detail.assigned_admin_id,
-                            )
-                            .map((admin) => (
-                              <option key={admin.user_id} value={admin.user_id}>
-                                {admin.display_name || '管理员'} · {admin.user_id.slice(0, 8)}
-                              </option>
-                            ))}
-                        </select>
-                      ) : (
-                        <span className="muted">当前角色只能指派给自己</span>
-                      )}
-                    </label>
-                    <label className="field">
-                      <span className="field-label">指派理由</span>
-                      <input
-                        value={assignReason}
-                        maxLength={300}
-                        placeholder="说明为什么由该管理员处理"
-                        onChange={(event) => setAssignReason(event.target.value)}
-                      />
-                    </label>
-                    <Button type="submit" size="sm" tone="secondary" loading={busy === 'assign'}>
-                      确认指派
-                    </Button>
-                  </form>
-
-                  {formError && (
-                    <p className="field-error" role="alert">
-                      {formError}
-                    </p>
-                  )}
-                  <p className="field-hint">
-                    失败后保持本页用相同内容重试会复用同一操作编号；刷新页面后请先在审计日志确认是否已保存，再决定是否重发。
-                  </p>
-                </div>
-              ) : (
-                <SectionNote>客服或运营角色可回复与处理工单。</SectionNote>
-              )}
-            </Panel>
-          </div>
-
-          <Panel title="用户描述" subtitle="用户提交时的原始描述，不做自动改写">
-            <p className="ticket-description">{detail.description}</p>
-          </Panel>
-
-          <Panel title="会话记录" subtitle="内部备注带明确标识，绝不会同步给用户">
-            {detail.messages.length === 0 ? (
-              <StateView kind="empty" title="还没有会话消息" />
-            ) : (
-              <ol className="thread">
-                {detail.messages.map((message) => (
-                  <li
-                    key={message.id}
-                    className={`thread-item thread-${message.visibility} thread-author-${message.author_type}`}
-                  >
-                    <div className="thread-head">
-                      <strong>{message.author_label}</strong>
-                      <span>
-                        {message.author_type === 'user'
-                          ? '用户'
-                          : message.author_type === 'admin'
-                            ? '管理员'
-                            : '系统'}
-                        {message.visibility === 'internal' && (
-                          <StatusPill tone="warn">内部备注 · 用户不可见</StatusPill>
-                        )}
-                      </span>
-                      <time>{formatDateTime(message.created_at)}</time>
-                    </div>
-                    <p>{message.body}</p>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </Panel>
-
-          {canWrite && (
-            <div className="split-grid">
-              <Panel title="回复用户" subtitle="此内容会出现在用户的帮助与反馈中">
-                {detail.status === 'resolved' ? (
-                  <SectionNote>
-                    工单已解决，不能直接回复。请先在“处理动作”中把状态改为“处理中”。
-                  </SectionNote>
+              <Panel title="会话记录" subtitle="内部备注带明确标识，绝不会同步给用户">
+                {detail.messages.length === 0 ? (
+                  <StateView kind="empty" title="还没有会话消息" />
                 ) : (
-                  <form className="mini-form" onSubmit={submitReply}>
-                    <fieldset disabled={Boolean(busy) || state.loading} className="reply-fields">
-                      <SectionNote>
-                        {storageFailed
-                          ? '浏览器无法保存草稿，请保持此页打开。'
-                          : '草稿仅保存在当前标签页，24 小时内可恢复；退出登录时清除。'}
-                      </SectionNote>
-                      <label className="field">
-                        <span className="field-label">回复内容</span>
-                        <textarea
-                          rows={4}
-                          maxLength={2000}
-                          value={replyBody}
-                          placeholder="说明处理结果或需要用户补充的信息"
-                          onChange={(event) => setReplyBody(event.target.value)}
-                        />
-                        <span className="field-hint">{replyBody.trim().length} / 2000</span>
-                      </label>
-                      <label className="field">
-                        <span className="field-label">操作理由（可选，留空使用默认）</span>
-                        <input
-                          value={replyReason}
-                          maxLength={300}
-                          onChange={(event) => setReplyReason(event.target.value)}
-                        />
-                      </label>
-                      <label className="field">
-                        <span className="field-label">发送后状态</span>
-                        <select
-                          value={draft.status}
-                          onChange={(event) =>
-                            setDraft((value) => ({
-                              ...value,
-                              status: event.target.value as 'waiting_user' | 'resolved',
-                            }))
-                          }
-                        >
-                          <option value="waiting_user">等待用户回复</option>
-                          <option value="resolved">已解决</option>
-                        </select>
-                      </label>
-                      <Button
-                        type="submit"
-                        icon="check"
-                        loading={busy === 'reply'}
-                        disabled={!replyBody.trim()}
+                  <ol className="thread">
+                    {detail.messages.map((message) => (
+                      <li
+                        key={message.id}
+                        className={`thread-item thread-${message.visibility} thread-author-${message.author_type}`}
                       >
-                        {draft.status === 'resolved' ? '回复并解决' : '回复并等待用户'}
-                      </Button>
-                    </fieldset>
-                  </form>
+                        <div className="thread-head">
+                          <strong>{message.author_label}</strong>
+                          <span>
+                            {message.author_type === 'user'
+                              ? '用户'
+                              : message.author_type === 'admin'
+                                ? '管理员'
+                                : '系统'}
+                            {message.visibility === 'internal' && (
+                              <StatusPill tone="warn">内部备注 · 用户不可见</StatusPill>
+                            )}
+                          </span>
+                          <time>{formatDateTime(message.created_at)}</time>
+                        </div>
+                        <p>{message.body}</p>
+                      </li>
+                    ))}
+                  </ol>
                 )}
               </Panel>
 
-              <Panel title="内部备注" subtitle="仅管理台可见，不发送给用户">
-                <form className="mini-form" onSubmit={submitNote}>
-                  <label className="field">
-                    <span className="field-label">备注内容</span>
-                    <textarea
-                      rows={4}
-                      maxLength={2000}
-                      value={noteBody}
-                      placeholder="例如：与推送诊断的 request_id 关联，等待个推回执"
-                      onChange={(event) => setNoteBody(event.target.value)}
-                    />
-                    <span className="field-hint">{noteBody.trim().length} / 2000</span>
-                  </label>
-                  <Button type="submit" tone="secondary" icon="lock" loading={busy === 'note'}>
-                    保存内部备注
-                  </Button>
-                </form>
-              </Panel>
+              {canWrite && (
+                <div className="ticket-composer">
+                  <div className="view-tabs" role="group" aria-label="选择回复方式">
+                    <button
+                      className={composeMode === 'reply' ? 'active' : ''}
+                      type="button"
+                      aria-pressed={composeMode === 'reply'}
+                      onClick={() => setComposeMode('reply')}
+                    >
+                      回复用户
+                    </button>
+                    <button
+                      className={composeMode === 'note' ? 'active' : ''}
+                      type="button"
+                      aria-pressed={composeMode === 'note'}
+                      onClick={() => setComposeMode('note')}
+                    >
+                      内部备注
+                    </button>
+                  </div>
+                  {formError && (
+                    <p className="inline-error" role="alert">
+                      {formError}
+                    </p>
+                  )}
+                  {composeMode === 'reply' && (
+                    <Panel title="回复用户" subtitle="此内容会出现在用户的帮助与反馈中">
+                      {detail.status === 'resolved' ? (
+                        <SectionNote>
+                          工单已解决，不能直接回复。请先在“处理动作”中把状态改为“处理中”。
+                        </SectionNote>
+                      ) : (
+                        <form className="mini-form" onSubmit={submitReply}>
+                          <fieldset
+                            disabled={Boolean(busy) || state.loading}
+                            className="reply-fields"
+                          >
+                            <SectionNote>
+                              {storageFailed
+                                ? '浏览器无法保存草稿，请保持此页打开。'
+                                : '草稿仅保存在当前标签页，24 小时内可恢复；退出登录时清除。'}
+                            </SectionNote>
+                            <label className="field">
+                              <span className="field-label">回复内容</span>
+                              <textarea
+                                rows={4}
+                                maxLength={2000}
+                                value={replyBody}
+                                placeholder="说明处理结果或需要用户补充的信息"
+                                onChange={(event) => setReplyBody(event.target.value)}
+                              />
+                              <span className="field-hint">{replyBody.trim().length} / 2000</span>
+                            </label>
+                            <label className="field">
+                              <span className="field-label">操作理由（可选，留空使用默认）</span>
+                              <input
+                                value={replyReason}
+                                maxLength={300}
+                                onChange={(event) => setReplyReason(event.target.value)}
+                              />
+                            </label>
+                            <label className="field">
+                              <span className="field-label">发送后状态</span>
+                              <select
+                                value={draft.status}
+                                onChange={(event) =>
+                                  setDraft((value) => ({
+                                    ...value,
+                                    status: event.target.value as 'waiting_user' | 'resolved',
+                                  }))
+                                }
+                              >
+                                <option value="waiting_user">等待用户回复</option>
+                                <option value="resolved">已解决</option>
+                              </select>
+                            </label>
+                            <Button
+                              type="submit"
+                              icon="check"
+                              loading={busy === 'reply'}
+                              disabled={!replyBody.trim()}
+                            >
+                              {draft.status === 'resolved' ? '回复并解决' : '回复并等待用户'}
+                            </Button>
+                          </fieldset>
+                        </form>
+                      )}
+                    </Panel>
+                  )}
+
+                  {composeMode === 'note' && (
+                    <Panel title="内部备注" subtitle="仅管理台可见，不发送给用户">
+                      <form className="mini-form" onSubmit={submitNote}>
+                        <label className="field">
+                          <span className="field-label">备注内容</span>
+                          <textarea
+                            rows={4}
+                            maxLength={2000}
+                            value={noteBody}
+                            placeholder="例如：与推送诊断的 request_id 关联，等待个推回执"
+                            onChange={(event) => setNoteBody(event.target.value)}
+                          />
+                          <span className="field-hint">{noteBody.trim().length} / 2000</span>
+                        </label>
+                        <Button
+                          type="submit"
+                          tone="secondary"
+                          icon="lock"
+                          loading={busy === 'note'}
+                        >
+                          保存内部备注
+                        </Button>
+                      </form>
+                    </Panel>
+                  )}
+                </div>
+              )}
             </div>
-          )}
+            <aside className="ticket-sidebar">
+              <Panel title="工单信息">
+                <DetailGrid
+                  columns={2}
+                  items={[
+                    {
+                      label: '状态',
+                      value: (
+                        <StatusPill tone={detailStatusTone(detail.status)}>
+                          {ticketStatusLabels[detail.status]}
+                        </StatusPill>
+                      ),
+                    },
+                    { label: '分类', value: ticketCategoryLabels[detail.category] },
+                    { label: '处理人', value: detail.assignee_name || '未指派' },
+                    { label: '创建时间', value: formatDateTime(detail.created_at) },
+                    { label: '最近更新', value: formatDateTime(detail.updated_at) },
+                    { label: '解决时间', value: formatDateTime(detail.resolved_at) },
+                    {
+                      label: '用户',
+                      value: (
+                        <button
+                          type="button"
+                          className="inline-link"
+                          onClick={() => navigate(`/users/${detail.user_id}`)}
+                        >
+                          {detail.user_name} · {detail.email_masked || '无邮箱'}
+                        </button>
+                      ),
+                    },
+                    {
+                      label: '关联空间',
+                      value: detail.couple_id ? (
+                        <button
+                          type="button"
+                          className="inline-link"
+                          onClick={() => navigate(`/couples/${detail.couple_id}`)}
+                        >
+                          {detail.couple_id}
+                        </button>
+                      ) : (
+                        '未关联'
+                      ),
+                    },
+                    {
+                      label: '客户端',
+                      value:
+                        [detail.client_platform, detail.client_app_version]
+                          .filter(Boolean)
+                          .join(' · ') || '未上报',
+                    },
+                    {
+                      label: '工单 ID',
+                      value: (
+                        <span className="copy-row">
+                          <span className="mono">{detail.id}</span>
+                          <CopyButton value={detail.id} label="复制" />
+                        </span>
+                      ),
+                    },
+                  ]}
+                />
+              </Panel>
+
+              <Panel
+                title="处理动作"
+                subtitle={
+                  canWrite ? '调整工单状态或指定处理人' : '当前角色只能查看，不能回复或变更状态'
+                }
+              >
+                {canWrite ? (
+                  <div className="action-stack">
+                    <form className="mini-form" onSubmit={submitStatus}>
+                      <label className="field">
+                        <span className="field-label">变更状态</span>
+                        <select
+                          value={pendingStatus}
+                          onChange={(event) =>
+                            setPendingStatus(event.target.value as TicketStatus | '')
+                          }
+                        >
+                          <option value="">选择目标状态</option>
+                          {NEXT_STATUS[detail.status].map((next) => (
+                            <option key={next} value={next}>
+                              {ticketStatusLabels[next]}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="field">
+                        <span className="field-label">变更理由</span>
+                        <input
+                          value={statusReason}
+                          maxLength={300}
+                          placeholder="例如：已确认问题并给出修复时间"
+                          onChange={(event) => setStatusReason(event.target.value)}
+                        />
+                      </label>
+                      <Button type="submit" size="sm" loading={busy === 'status'}>
+                        更新状态
+                      </Button>
+                    </form>
+
+                    <form
+                      className="mini-form"
+                      onSubmit={(event) => {
+                        event.preventDefault()
+                        submitAssign(assignee || undefined)
+                      }}
+                    >
+                      <label className="field">
+                        <span className="field-label">指派处理人</span>
+                        {canManageAdmins ? (
+                          <select
+                            value={assignee}
+                            onChange={(event) => setAssignee(event.target.value)}
+                          >
+                            <option value="">指派给我自己</option>
+                            {(adminsState.data?.rows || [])
+                              .filter(
+                                (admin) =>
+                                  admin.status === 'active' &&
+                                  admin.user_id !== detail.assigned_admin_id,
+                              )
+                              .map((admin) => (
+                                <option key={admin.user_id} value={admin.user_id}>
+                                  {admin.display_name || '管理员'} · {admin.user_id}
+                                </option>
+                              ))}
+                          </select>
+                        ) : (
+                          <span className="muted">当前角色只能指派给自己</span>
+                        )}
+                      </label>
+                      <label className="field">
+                        <span className="field-label">指派理由</span>
+                        <input
+                          value={assignReason}
+                          maxLength={300}
+                          placeholder="说明为什么由该管理员处理"
+                          onChange={(event) => setAssignReason(event.target.value)}
+                        />
+                      </label>
+                      <Button type="submit" size="sm" tone="secondary" loading={busy === 'assign'}>
+                        确认指派
+                      </Button>
+                    </form>
+
+                    {formError && (
+                      <p className="field-error" role="alert">
+                        {formError}
+                      </p>
+                    )}
+                    <p className="field-hint">
+                      提交失败时会保留输入；如结果不明确，可先查看操作日志。
+                    </p>
+                  </div>
+                ) : (
+                  <SectionNote>客服或运营角色可回复与处理工单。</SectionNote>
+                )}
+              </Panel>
+            </aside>
+          </div>
         </>
       )}
     </>

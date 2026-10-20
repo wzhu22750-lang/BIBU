@@ -183,9 +183,7 @@ export const api = {
 
 export function errorMessage(error: unknown): string {
   if (error instanceof ApiError) {
-    return error.requestId
-      ? `${error.message}（请求 ${error.requestId.slice(0, 8)}）`
-      : error.message
+    return error.requestId ? `${error.message}（请求 ${error.requestId}）` : error.message
   }
   if (error instanceof Error) return error.message
   return String(error)

@@ -1,3 +1,5 @@
+import { AccountPage } from './pages/Account'
+import { DataPage } from './pages/Data'
 import { Fragment, useEffect, type ReactNode } from 'react'
 import { AuthProvider, useAuth } from './lib/auth'
 import { useRoute, navigate, type RouteState } from './lib/route'
@@ -22,6 +24,8 @@ const ROUTES: Array<{
   capability: string
   render: (route: RouteState) => ReactNode
 }> = [
+  { path: '/data', capability: 'data.read', render: (route) => <DataPage route={route} /> },
+  { path: '/account', capability: 'overview.read', render: () => <AccountPage /> },
   {
     path: '/overview',
     capability: 'overview.read',
@@ -65,7 +69,10 @@ const ROUTES: Array<{
 
 function Landing({ can }: { can: (capability: string) => boolean }) {
   const path =
-    ROUTES.find((item) => !item.path.endsWith('/') && can(item.capability))?.path || '/overview'
+    (can('overview.read')
+      ? '/overview'
+      : ROUTES.find((item) => !item.path.endsWith('/') && can(item.capability))?.path) ||
+    '/overview'
   useEffect(() => {
     navigate(path)
   }, [path])

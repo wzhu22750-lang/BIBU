@@ -60,5 +60,5 @@ export function withRequestId(message: string, value: unknown): string {
   const operation = operationMetadata(value)
   if (!operation?.request_id) return message
   const prefix = operation.replayed ? '此前已提交成功' : '已完成'
-  return `${message} · ${prefix}，请求 ${operation.request_id.slice(0, 8)}…`
+  return `${message} · ${prefix}，请求 ${operation.request_id}`
 }

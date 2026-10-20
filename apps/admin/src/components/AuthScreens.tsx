@@ -1,6 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { useAuth } from '../lib/auth'
-import { maskEmail } from '../lib/format'
 import { BrandMark, Icon } from './Icon'
 import { Button } from './ui'
 
@@ -39,7 +38,7 @@ function AuthFrame({
             </li>
             <li>
               <Icon name="lock" size={18} />
-              不展示聊天正文、照片原图与完整推送 Token
+              统一管理用户、空间、工单与完整业务记录
             </li>
           </ul>
         </div>
@@ -160,7 +159,7 @@ export function DeniedScreen() {
     <AuthFrame eyebrow="访问受限" title={copy.title} description={copy.description}>
       <div className="denied-meta">
         <span>当前账号</span>
-        <strong>{maskEmail(auth.email)}</strong>
+        <strong>{auth.email || '无邮箱'}</strong>
       </div>
       <div className="auth-actions">
         {reason === 'session_expired' ? (

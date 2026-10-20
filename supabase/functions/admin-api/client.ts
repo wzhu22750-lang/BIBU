@@ -5,6 +5,14 @@ import type { AdminApiClient, AuthUser, DbError, RpcResult } from './types.ts'
 // PostgREST 的 count/status 等管理 API 用不到的字段。禁止再用 as unknown as
 // 整体覆盖客户端类型，否则 .catch 之类的契约错误会再次被类型系统隐藏。
 export type SupabaseAdminBackend = {
+  storage?: {
+    from(bucket: string): {
+      createSignedUrl(
+        path: string,
+        expiresIn: number,
+      ): Promise<{ data: { signedUrl: string } | null; error: DbError }>
+    }
+  }
   auth: {
     getUser(token: string): Promise<{
       data: { user: AuthUser | null }
@@ -17,6 +25,14 @@ export type SupabaseAdminBackend = {
 export function createAdminApiClient(backend: SupabaseAdminBackend): AdminApiClient {
   return {
     auth: backend.auth,
+    signPhoto: backend.storage
+      ? async (path) => {
+          const { data, error } = await backend
+            .storage!.from('couple-photos')
+            .createSignedUrl(path, 300)
+          return { url: data?.signedUrl || null, error }
+        }
+      : undefined,
     rpc<T = unknown>(name: string, args?: Record<string, unknown>): PromiseLike<RpcResult<T>> {
       return Promise.resolve(backend.rpc(name, args)).then(({ data, error }): RpcResult<T> => ({
         data: data as T,

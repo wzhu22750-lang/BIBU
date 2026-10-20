@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useAuth } from '../lib/auth'
-import { formatDateTime, maskEmail, roleLabels } from '../lib/format'
+import { roleLabels } from '../lib/format'
 import { routeHref, type RouteState } from '../lib/route'
 import { Icon, type IconName } from './Icon'
 import { Button } from './ui'
@@ -10,17 +10,68 @@ type NavItem = {
   label: string
   icon: IconName
   capability: string
+  group: string
 }
 
 const NAV: NavItem[] = [
-  { path: '/overview', label: '运营概览', icon: 'overview', capability: 'overview.read' },
-  { path: '/users', label: '用户', icon: 'users', capability: 'users.read' },
-  { path: '/couples', label: '双人空间', icon: 'heart', capability: 'couples.read' },
-  { path: '/tickets', label: '反馈工单', icon: 'ticket', capability: 'tickets.read' },
-  { path: '/diagnostics', label: '互动与通知诊断', icon: 'pulse', capability: 'diagnostics.read' },
-  { path: '/audit', label: '审计日志', icon: 'audit', capability: 'audit.read' },
-  { path: '/system', label: '系统状态', icon: 'system', capability: 'system.read' },
-  { path: '/admins', label: '管理员与权限', icon: 'shield', capability: 'admins.manage' },
+  {
+    path: '/account',
+    label: '我的账号',
+    icon: 'shield',
+    capability: 'overview.read',
+    group: '后台设置',
+  },
+  {
+    path: '/overview',
+    label: '总览',
+    icon: 'overview',
+    capability: 'overview.read',
+    group: '工作台',
+  },
+  {
+    path: '/users',
+    label: '用户管理',
+    icon: 'users',
+    capability: 'users.read',
+    group: '用户与空间',
+  },
+  {
+    path: '/couples',
+    label: '双人空间',
+    icon: 'heart',
+    capability: 'couples.read',
+    group: '用户与空间',
+  },
+  { path: '/data', label: '业务数据', icon: 'audit', capability: 'data.read', group: '用户与空间' },
+  {
+    path: '/tickets',
+    label: '工单处理',
+    icon: 'ticket',
+    capability: 'tickets.read',
+    group: '服务与反馈',
+  },
+  {
+    path: '/diagnostics',
+    label: '通知诊断',
+    icon: 'pulse',
+    capability: 'diagnostics.read',
+    group: '运行维护',
+  },
+  { path: '/audit', label: '操作日志', icon: 'audit', capability: 'audit.read', group: '运行维护' },
+  {
+    path: '/system',
+    label: '系统状态',
+    icon: 'system',
+    capability: 'system.read',
+    group: '运行维护',
+  },
+  {
+    path: '/admins',
+    label: '管理员权限',
+    icon: 'shield',
+    capability: 'admins.manage',
+    group: '后台设置',
+  },
 ]
 
 function activePath(path: string): string {
@@ -117,7 +168,14 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
 
   return (
     <div className="shell">
-      <a className="skip-link" href="#main-content">
+      <a
+        className="skip-link"
+        href="#main-content"
+        onClick={(event) => {
+          event.preventDefault()
+          scrollRef.current?.focus()
+        }}
+      >
         跳到主要内容
       </a>
       <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`} aria-label="管理台导航">
@@ -149,24 +207,32 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
         </div>
 
         <nav className="nav">
-          <div className="nav-label">工作区</div>
-          {visible.map((item) => (
-            <a
-              key={item.path}
-              href={routeHref(item.path)}
-              className={active === item.path ? 'nav-item nav-active' : 'nav-item'}
-              aria-current={active === item.path ? 'page' : undefined}
-            >
-              <Icon name={item.icon} size={19} />
-              <span>{item.label}</span>
-            </a>
-          ))}
+          {['工作台', '用户与空间', '服务与反馈', '运行维护', '后台设置'].map((group) => {
+            const items = visible.filter((item) => item.group === group)
+            if (!items.length) return null
+            return (
+              <div className="nav-group" key={group}>
+                <div className="nav-label">{group}</div>
+                {items.map((item) => (
+                  <a
+                    key={item.path}
+                    href={routeHref(item.path)}
+                    className={active === item.path ? 'nav-item nav-active' : 'nav-item'}
+                    aria-current={active === item.path ? 'page' : undefined}
+                  >
+                    <Icon name={item.icon} size={18} />
+                    <span>{item.label}</span>
+                  </a>
+                ))}
+              </div>
+            )
+          })}
         </nav>
 
         <div className="sidebar-foot">
           <div className="security-state">
             <Icon name="shield" size={16} />
-            <span>两步验证已启用</span>
+            <span>管理员会话已验证</span>
           </div>
           <div className="sidebar-meta">
             <span>构建 {__ADMIN_BUILD__.commit}</span>
@@ -197,16 +263,23 @@ export function Shell({ route, children }: { route: RouteState; children: ReactN
               <Icon name="menu" size={20} />
             </button>
             <span className="env-badge">{session?.env || 'production'}</span>
-            <span className="topbar-time">
-              <Icon name="calendar" size={14} />
-              服务端时间 {formatDateTime(session?.server_time)}
-            </span>
+            <div className="breadcrumb">
+              <span>{NAV.find((item) => item.path === active)?.group}</span>
+              <span aria-hidden="true">/</span>
+              <strong>{NAV.find((item) => item.path === active)?.label}</strong>
+              {route.path !== active && (
+                <>
+                  <span aria-hidden="true">/</span>
+                  <span>详情</span>
+                </>
+              )}
+            </div>
           </div>
           <div className="topbar-right">
             <div className="admin-identity">
               <strong>{session?.actor.display_name || '管理员'}</strong>
               <span>
-                {session ? roleLabels[session.actor.role] : ''} · {maskEmail(auth.email)}
+                {session ? roleLabels[session.actor.role] : ''} · {auth.email || '无邮箱'}
               </span>
             </div>
             <Button

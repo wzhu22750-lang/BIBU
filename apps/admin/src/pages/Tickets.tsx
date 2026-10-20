@@ -16,7 +16,6 @@ import {
   PageHeader,
   Pagination,
   Panel,
-  PrivacyNote,
   StateView,
   StatusPill,
 } from '../components/ui'
@@ -88,8 +87,8 @@ export function TicketsPage({ route }: { route: RouteState }) {
     <>
       <PageHeader
         eyebrow="反馈工单"
-        title="用户反馈与回复"
-        description="用户只能看到管理员主动发送的回复；内部备注只在管理台可见。管理与回复动作都会写入审计日志。"
+        title="工单处理"
+        description="集中处理用户反馈，跟进等待回复的事项。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
             刷新
@@ -173,10 +172,6 @@ export function TicketsPage({ route }: { route: RouteState }) {
           </div>
         </form>
       </Panel>
-
-      <PrivacyNote>
-        工单仅包含用户主动提交的描述与回复，不会自动读取聊天记录。回复只写入工单会话，不会发送邮件、短信或广播。
-      </PrivacyNote>
 
       <Panel
         title="工单列表"

@@ -119,6 +119,7 @@ export type Paged<T> = {
 }
 
 export type UserDevice = {
+  token?: string | null
   id: string
   platform: string
   app_version: string | null

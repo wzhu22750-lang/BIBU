@@ -20,7 +20,6 @@ import {
   PageHeader,
   Pagination,
   Panel,
-  PrivacyNote,
   StateView,
   StatusPill,
 } from '../components/ui'
@@ -145,8 +144,8 @@ export function UsersPage({ route }: { route: RouteState }) {
     <>
       <PageHeader
         eyebrow="用户"
-        title="账号与设备"
-        description="按账号状态、配对情况与注册日期查找用户。邮箱仅显示掩码；不会展示聊天内容、照片或登录凭据。"
+        title="用户管理"
+        description="查找用户、查看账号资料与关联空间。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
             刷新
@@ -274,10 +273,6 @@ export function UsersPage({ route }: { route: RouteState }) {
         </form>
       </Panel>
 
-      <PrivacyNote>
-        页面只返回掩码邮箱、配对状态、设备数量与最近活动时间；客服与运营可写备注，但不能修改用户资料、密码或强制解绑。
-      </PrivacyNote>
-
       <Panel
         title="用户列表"
         subtitle={
@@ -336,7 +331,7 @@ export function UsersPage({ route }: { route: RouteState }) {
                               <strong>{user.name}</strong>
                             </a>
                             <small>{user.email_masked || '无邮箱（微信或匿名）'}</small>
-                            <small className="mono">{user.user_id.slice(0, 8)}…</small>
+                            <small className="mono">{user.user_id}</small>
                           </span>
                         </div>
                       </td>

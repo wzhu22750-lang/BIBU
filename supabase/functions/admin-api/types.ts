@@ -26,6 +26,7 @@ export type RpcResult<T> = {
 }
 
 export type AdminApiClient = {
+  signPhoto?: (path: string) => Promise<{ url: string | null; error: DbError }>
   auth: {
     getUser(token: string): Promise<{
       data: { user: AuthUser | null }

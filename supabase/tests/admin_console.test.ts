@@ -85,7 +85,9 @@ beforeAll(async () => {
         file === '202610200001_admin_console.sql' ||
         file === '202610200002_admin_hardening.sql' ||
         file === '20261020110436_admin_workflow.sql' ||
-        file === '20261020111834_admin_waiting_since.sql',
+        file === '20261020111834_admin_waiting_since.sql' ||
+        file === '20261020122206_admin_information_architecture.sql' ||
+        file === '20261020123629_admin_record_scope.sql',
     )
     .sort()
   for (const file of files) {
@@ -607,16 +609,16 @@ describe.sequential('admin console database boundary', () => {
       ),
     )
     expect(ownerSearch.rows).toHaveLength(1)
-    expect(ownerSearch.rows[0].email_masked).toBe('a***@example.com')
+    expect(ownerSearch.rows[0].email_masked).toBe('alice@example.com')
     expect(ownerSearch.rows[0]).not.toHaveProperty('total_count')
-    expect(JSON.stringify(ownerSearch)).not.toContain('alice@example.com')
+    expect(JSON.stringify(ownerSearch)).toContain('alice@example.com')
 
     const userDetail = parse<Record<string, any>>(
       await scalar('select public.admin_user_detail($1,$2)', [A, A]),
     )
-    expect(userDetail.email_masked).toBe('a***@example.com')
-    expect(JSON.stringify(userDetail)).not.toContain('alice@example.com')
-    expect(JSON.stringify(userDetail)).not.toContain(FULL_TOKEN)
+    expect(userDetail.email_masked).toBe('alice@example.com')
+    expect(JSON.stringify(userDetail)).toContain('alice@example.com')
+    expect(userDetail.devices[0].token).toBe(FULL_TOKEN)
     expect(userDetail.devices[0].token_suffix).toBe(FULL_TOKEN.slice(-6))
 
     const couples = parse<{ rows: Record<string, any>[] }>(
@@ -732,7 +734,7 @@ describe.sequential('admin console database boundary', () => {
       await scalar('select public.admin_ticket_detail($1,$2)', [A, ticketId]),
     )
     expect(ticket.couple_id).toBe(couple)
-    expect(JSON.stringify(ticket)).not.toContain('alice@example.com')
+    expect(JSON.stringify(ticket)).toContain('alice@example.com')
     const other = parse<{ rows: unknown[] }>(
       await scalar(
         `select public.admin_list_couples($1,'2026-10-20','2026-10-20','all','all',1,10,'created_at_desc')`,
@@ -864,5 +866,66 @@ describe.sequential('admin console database boundary', () => {
         [B, MESSAGE_A],
       ),
     ).rejects.toThrow()
+  })
+  it('allows full business content for the owner while retaining staff boundaries and read audits', async () => {
+    await asService()
+    const read = async (entity: string, space = couple) =>
+      parse<Record<string, any>>(
+        await scalar(`select public.admin_read_records($1,$2,$3,null,'',1,20,'req-full-content')`, [
+          A,
+          entity,
+          space,
+        ]),
+      )
+    expect((await read('profiles')).total).toBe(2)
+    const tasksByUser = parse<Record<string, any>>(
+      await scalar(`select public.admin_read_records($1,'daily_tasks',null,$2)`, [A, A]),
+    )
+    expect(tasksByUser.total).toBeGreaterThan(0)
+    const messages = await read('messages')
+    expect(messages.rows.some((row: any) => row.content === '私密消息内容ABC')).toBe(true)
+    expect(
+      (await read('photos')).rows.some((row: any) => row.path.includes('secret-photo.jpg')),
+    ).toBe(true)
+    expect((await read('couples')).rows[0].greeting_title).toBe('私密寄语XYZ')
+    const all = await read('daily_task_completions')
+    expect(all.rows.every((row: any) => Object.hasOwn(row, 'optional_content'))).toBe(true)
+    for (const entity of [
+      'profiles',
+      'couple_members',
+      'events',
+      'daily_tasks',
+      'focus_sessions',
+      'pings',
+    ])
+      await read(entity)
+    await expect(
+      pg.query(`select public.admin_read_records($1,'messages',$2)`, [B, couple]),
+    ).rejects.toMatchObject({ code: '42501' })
+    await expect(
+      pg.query(`select public.admin_read_records($1,'auth.users')`, [A]),
+    ).rejects.toMatchObject({ code: '22023' })
+    await expect(
+      pg.query(`select public.admin_read_records($1,'device_installations')`, [A]),
+    ).rejects.toMatchObject({ code: '22023' })
+    const staff = parse<Record<string, any>>(
+      await scalar('select public.admin_user_detail($1,$2)', [B, A]),
+    )
+    expect(staff.email_masked).toBe('a***@example.com')
+    expect(JSON.stringify(staff)).not.toContain(FULL_TOKEN)
+    const id = (await read('photos')).rows[0].id
+    expect(await scalar('select public.admin_photo_path($1,$2)', [A, id])).toContain(
+      'secret-photo.jpg',
+    )
+    await expect(pg.query('select public.admin_photo_path($1,$2)', [B, id])).rejects.toMatchObject({
+      code: '42501',
+    })
+    const audit = parse<Record<string, any>>(
+      await scalar(`select public.admin_list_audit($1,'data.read','all',null,null,1,20)`, [A]),
+    )
+    expect(audit.total).toBeGreaterThan(0)
+    expect(JSON.stringify(audit)).not.toContain('私密消息内容ABC')
+    await asUser(A)
+    await expect(pg.query(`select public.admin_read_records($1,'messages')`, [A])).rejects.toThrow()
   })
 })

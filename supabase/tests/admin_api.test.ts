@@ -22,6 +22,7 @@ const CAPABILITIES: Record<AdminRole, string[]> = {
     'system.read',
     'audit.read',
     'admins.manage',
+    'data.read',
   ],
   operator: [
     'overview.read',
@@ -66,6 +67,7 @@ function validToken(overrides: Record<string, unknown> = {}): string {
 type RpcCall = { name: string; args: Record<string, unknown> }
 
 type Setup = {
+  photoSigner?: AdminApiClient['signPhoto']
   userId?: string
   actor?: Partial<AdminActor> | null
   initialized?: boolean
@@ -91,6 +93,7 @@ function setup(options: Setup = {}) {
   const actor =
     options.actor === null ? ({ found: false } as AdminActor) : actorFor('owner', options.actor)
   const client: AdminApiClient = {
+    signPhoto: options.photoSigner,
     auth: {
       getUser: async () => ({
         data: { user: { id: options.userId ?? OWNER_ID } },
@@ -490,5 +493,49 @@ describe('admin workflow API', () => {
       p_status: 'resolved',
       p_expected_updated_at: NOW.toISOString(),
     })
+  })
+})
+
+describe('full business records boundary', () => {
+  it('allows owner queries and refuses staff, invalid table names and malformed identifiers', async () => {
+    const { handler, calls } = setup()
+    expect(
+      (await request(handler, `/data?entity=messages&couple_id=${USER_ID}&query=完整&page=2`))
+        .status,
+    ).toBe(200)
+    expect(calls.find((call) => call.name === 'admin_read_records')?.args).toMatchObject({
+      p_actor: OWNER_ID,
+      p_entity: 'messages',
+      p_couple_id: USER_ID,
+      p_query: '完整',
+      p_page: 2,
+    })
+    expect((await request(handler, '/data?entity=auth.users')).status).toBe(400)
+    expect((await request(handler, '/data?couple_id=bad')).status).toBe(400)
+    const staff = setup({ actor: actorFor('support') })
+    expect((await request(staff.handler, '/data?entity=messages')).status).toBe(403)
+    expect(staff.calls.some((call) => call.name === 'admin_read_records')).toBe(false)
+    expect((await request(handler, '/data', { token: null })).status).toBe(401)
+  })
+  it('signs only the photo path resolved by the authorized database function', async () => {
+    const paths: string[] = []
+    const { handler } = setup({
+      rpcData: 'space/user/photo.jpg',
+      photoSigner: async (path) => {
+        paths.push(path)
+        return { url: 'https://storage.example.test/signed-photo', error: null }
+      },
+    })
+    const response = await request(handler, `/data/photos/${USER_ID}/image`)
+    expect(response.status).toBe(200)
+    expect(paths).toEqual(['space/user/photo.jpg'])
+    expect((await body(response)).data.expires_in).toBe(300)
+    const staff = setup({
+      actor: actorFor('support'),
+      photoSigner: async () => {
+        throw new Error('must not sign')
+      },
+    })
+    expect((await request(staff.handler, `/data/photos/${USER_ID}/image`)).status).toBe(403)
   })
 })

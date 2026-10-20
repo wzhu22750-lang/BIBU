@@ -1,3 +1,5 @@
+import { useAuth } from '../lib/auth'
+import { routeHref } from '../lib/route'
 import { api } from '../lib/api'
 import { useApi } from '../lib/useApi'
 import type { CoupleDetail } from '../lib/types'
@@ -16,14 +18,13 @@ import {
   InlineError,
   PageHeader,
   Panel,
-  PrivacyNote,
-  SectionNote,
   StateView,
   StatusPill,
 } from '../components/ui'
 import { BackButton, useListRange } from './shared'
 
 export function CoupleDetailPage({ route }: { route: RouteState }) {
+  const auth = useAuth()
   const id = route.path.split('/')[2]
   const { from, to } = useListRange(route.params, 30, 92)
   const state = useApi(`couple:${id}:${from}:${to}`, (signal) =>
@@ -37,7 +38,7 @@ export function CoupleDetailPage({ route }: { route: RouteState }) {
       <PageHeader
         eyebrow="空间详情"
         title={detail?.name || '双人空间'}
-        description="关系的生命周期、成员与聚合互动统计。私密内容不在管理台展示，也不提供强制解绑或封存按钮。"
+        description="空间资料、成员与互动统计；完整内容可从业务数据进入。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
             刷新
@@ -56,6 +57,22 @@ export function CoupleDetailPage({ route }: { route: RouteState }) {
         <StateView kind="loading" />
       ) : (
         <>
+          {auth.can('data.read') && (
+            <nav className="context-links" aria-label="空间业务记录">
+              {[
+                ['messages', '聊天消息'],
+                ['photos', '照片与回忆'],
+                ['daily_task_completions', '任务回答'],
+                ['pings', '互动提醒'],
+                ['couples', '完整空间资料'],
+              ].map(([entity, label]) => (
+                <a key={entity} href={routeHref('/data', { entity, couple_id: id })}>
+                  {label}
+                  <span aria-hidden="true">→</span>
+                </a>
+              ))}
+            </nav>
+          )}
           <div className="toolbar">
             <RangeControl
               from={from}
@@ -150,7 +167,7 @@ export function CoupleDetailPage({ route }: { route: RouteState }) {
                     <tr>
                       <th>成员</th>
                       <th>席位</th>
-                      <th>掩码邮箱</th>
+                      <th>邮箱</th>
                       <th>账号创建</th>
                       <th>最近登录</th>
                     </tr>
@@ -173,7 +190,7 @@ export function CoupleDetailPage({ route }: { route: RouteState }) {
                             </span>
                             <span>
                               <strong>{member.name}</strong>
-                              <small className="mono">{member.user_id.slice(0, 8)}…</small>
+                              <small className="mono">{member.user_id}</small>
                             </span>
                           </div>
                         </td>
@@ -235,11 +252,6 @@ export function CoupleDetailPage({ route }: { route: RouteState }) {
               </div>
             )}
           </Panel>
-
-          <PrivacyNote>
-            不展示聊天正文、任务答案、照片原图或签名地址、空间寄语、邀请码。操作管理员无法在此强制配对、解绑或删除照片。
-          </PrivacyNote>
-          <SectionNote>照片数量只统计元数据行；不返回存储路径与可访问地址。</SectionNote>
         </>
       )}
     </>

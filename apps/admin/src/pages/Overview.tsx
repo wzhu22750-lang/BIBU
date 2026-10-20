@@ -81,8 +81,8 @@ export function OverviewPage({ route }: { route: RouteState }) {
   const header = (
     <PageHeader
       eyebrow="运营概览"
-      title="今天，哔卟被认真使用了吗？"
-      description="所有数字都来自服务端已落库记录。日期为北京时间自然日，含首尾两天；每项指标的分子、分母与排除规则见下方口径说明。"
+      title="运营总览"
+      description="先处理待办，再查看用户增长和空间使用情况。所有日期按北京时间统计。"
       actions={
         <div className="header-actions">
           <span className="updated-at">
@@ -143,9 +143,7 @@ export function OverviewPage({ route }: { route: RouteState }) {
           <span className={changeTone(percentChange(current.new_users, previous.new_users).tone)}>
             较上期 {percentChange(current.new_users, previous.new_users).text}
           </span>
-          <p className="metric-foot">
-            来源 auth.users.created_at · 含微信与邮箱账号 · 排除已删除账号
-          </p>
+          <p className="metric-foot">所选时间内新注册的账号</p>
         </article>
 
         <article className="metric-card">
@@ -159,7 +157,7 @@ export function OverviewPage({ route }: { route: RouteState }) {
           >
             较上期 {percentChange(current.new_couples, previous.new_couples).text}
           </span>
-          <p className="metric-foot">来源 couples.created_at · 不含仅创建邀请码但未配对的记录</p>
+          <p className="metric-foot">所选时间内新建的双人空间</p>
         </article>
 
         <article className="metric-card">
@@ -199,34 +197,6 @@ export function OverviewPage({ route }: { route: RouteState }) {
           </p>
         </article>
       </div>
-
-      <Panel
-        title="趋势"
-        subtitle={`${from} 至 ${to} · 北京时间 · 上期对比区间 ${previous.from} 至 ${previous.to}`}
-        actions={
-          <div className="segmented" role="group" aria-label="切换趋势指标">
-            {TREND_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={metric === option.value ? 'segment segment-active' : 'segment'}
-                aria-pressed={metric === option.value}
-                onClick={() => setMetric(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        }
-      >
-        {metric === 'task_rate' ? (
-          <SectionNote>
-            每日任务率为当日“双人各有完成记录的任务数 / 当前 2 人空间当日分配任务数”， 分母为 0
-            的日期留空，不以 0% 代替。
-          </SectionNote>
-        ) : null}
-        <TrendChart series={data.series} metric={metric} />
-      </Panel>
 
       <div className="split-grid">
         <Panel title="待处理异常" subtitle="只呈现在当前时间仍需要人工跟进的事项">
@@ -321,8 +291,7 @@ export function OverviewPage({ route }: { route: RouteState }) {
                     }
                   >
                     <span className="mono">
-                      {failure.event_type === 'message' ? '消息' : '提醒'} ·{' '}
-                      {failure.event_id.slice(0, 8)}
+                      {failure.event_type === 'message' ? '消息' : '提醒'} · {failure.event_id}
                     </span>
                     <span className="compact-meta">
                       {failure.error_code || '未知错误'} · {failure.attempts} 次 ·{' '}
@@ -335,6 +304,34 @@ export function OverviewPage({ route }: { route: RouteState }) {
           )}
         </Panel>
       </div>
+
+      <Panel
+        title="趋势"
+        subtitle={`${from} 至 ${to} · 北京时间 · 上期对比区间 ${previous.from} 至 ${previous.to}`}
+        actions={
+          <div className="segmented" role="group" aria-label="切换趋势指标">
+            {TREND_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={metric === option.value ? 'segment segment-active' : 'segment'}
+                aria-pressed={metric === option.value}
+                onClick={() => setMetric(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        }
+      >
+        {metric === 'task_rate' ? (
+          <SectionNote>
+            每日任务率为当日“双人各有完成记录的任务数 / 当前 2 人空间当日分配任务数”， 分母为 0
+            的日期留空，不以 0% 代替。
+          </SectionNote>
+        ) : null}
+        <TrendChart series={data.series} metric={metric} />
+      </Panel>
 
       <Panel
         title="最新用户反馈"
@@ -388,47 +385,50 @@ export function OverviewPage({ route }: { route: RouteState }) {
         )}
       </Panel>
 
-      <Panel title="指标口径与数据缺口" subtitle="避免把“未采集”误读为 0">
-        <div className="definition-grid">
-          <div>
-            <h3>计算口径</h3>
-            <ul className="definition-list">
-              <li>日期窗口：Asia/Shanghai 自然日 [开始日 00:00, 结束日次日 00:00)。</li>
-              <li>新增用户：auth.users.created_at 落在窗口内，包含微信账号。</li>
-              <li>新建空间：couples.created_at 落在窗口内，不还原已删除的历史关系。</li>
-              <li>
-                双向互动：当前恰好 2 名成员，两人各至少一次消息 / ping / 任务完成 /
-                照片服务端写入；以服务端落库为准。
-              </li>
-              <li>
-                任务完成率：仅统计当前 2
-                人空间；分子为两人各有完成记录的任务数，分母为窗口内分配给这些空间的任务数。
-              </li>
-              <li>last_seen_at 不是在线状态；消息与 ping 只证明服务端写入，不证明对方已读。</li>
-            </ul>
+      <details className="help-disclosure">
+        <summary>指标口径与采集说明</summary>
+        <Panel title="指标口径与数据缺口" subtitle="避免把“未采集”误读为 0">
+          <div className="definition-grid">
+            <div>
+              <h3>计算口径</h3>
+              <ul className="definition-list">
+                <li>日期窗口：Asia/Shanghai 自然日 [开始日 00:00, 结束日次日 00:00)。</li>
+                <li>新增用户：auth.users.created_at 落在窗口内，包含微信账号。</li>
+                <li>新建空间：couples.created_at 落在窗口内，不还原已删除的历史关系。</li>
+                <li>
+                  双向互动：当前恰好 2 名成员，两人各至少一次消息 / ping / 任务完成 /
+                  照片服务端写入；以服务端落库为准。
+                </li>
+                <li>
+                  任务完成率：仅统计当前 2
+                  人空间；分子为两人各有完成记录的任务数，分母为窗口内分配给这些空间的任务数。
+                </li>
+                <li>last_seen_at 不是在线状态；消息与 ping 只证明服务端写入，不证明对方已读。</li>
+              </ul>
+            </div>
+            <div>
+              <h3>尚未采集 / 无法计算</h3>
+              <ul className="definition-list definition-muted">
+                {data.unavailable.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <SectionNote>
+                当前没有伪造的 D1/D7/D28
+                留存、实时在线或客户端送达数据。若需要这些指标，需先补充采集与历史快照。
+              </SectionNote>
+            </div>
           </div>
-          <div>
-            <h3>尚未采集 / 无法计算</h3>
-            <ul className="definition-list definition-muted">
-              {data.unavailable.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <SectionNote>
-              当前没有伪造的 D1/D7/D28
-              留存、实时在线或客户端送达数据。若需要这些指标，需先补充采集与历史快照。
-            </SectionNote>
-          </div>
-        </div>
-        {auth.can('diagnostics.read') && (
-          <p className="definition-links">
-            <a href={diagnosticsLink()}>查看通知诊断</a>
-            <a href={deletionLink}>查看注销待处理账号</a>
-            <a href={ticketsLink('waiting_user')}>查看等待用户工单</a>
-            <span>状态说明：{Object.values(deliveryStatusLabels).join(' / ')}</span>
-          </p>
-        )}
-      </Panel>
+          {auth.can('diagnostics.read') && (
+            <p className="definition-links">
+              <a href={diagnosticsLink()}>查看通知诊断</a>
+              <a href={deletionLink}>查看注销待处理账号</a>
+              <a href={ticketsLink('waiting_user')}>查看等待用户工单</a>
+              <span>状态说明：{Object.values(deliveryStatusLabels).join(' / ')}</span>
+            </p>
+          )}
+        </Panel>
+      </details>
     </>
   )
 }

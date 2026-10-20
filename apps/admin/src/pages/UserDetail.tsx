@@ -1,3 +1,4 @@
+import { routeHref } from '../lib/route'
 import { useState, type FormEvent } from 'react'
 import { api, errorMessage } from '../lib/api'
 import { useAuth } from '../lib/auth'
@@ -21,7 +22,6 @@ import {
   InlineError,
   Panel,
   PageHeader,
-  PrivacyNote,
   SectionNote,
   StateView,
   StatusPill,
@@ -81,7 +81,7 @@ export function UserDetailPage({ route }: { route: RouteState }) {
       <PageHeader
         eyebrow="用户详情"
         title={state.data?.name || '用户'}
-        description="账号、配对空间、设备与客服备注。此页不展示聊天正文、任务答案、照片原图或完整推送 Token。"
+        description="账号资料、关联空间、设备与处理记录。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
             刷新
@@ -134,9 +134,7 @@ export function UserDetailPage({ route }: { route: RouteState }) {
                   {formError}
                 </p>
               )}
-              <p className="field-hint">
-                失败后保持本页用相同内容重试会复用同一操作编号；刷新页面后请先在审计日志确认是否已保存，再决定是否重发。
-              </p>
+              <p className="field-hint">提交失败时会保留输入；如结果不明确，可先查看操作日志。</p>
               <Button type="submit" icon="plus" loading={saving}>
                 添加备注
               </Button>
@@ -171,6 +169,7 @@ export function UserDetailPage({ route }: { route: RouteState }) {
 }
 
 function UserDetailBody({ detail }: { detail: UserDetail }) {
+  const auth = useAuth()
   return (
     <>
       {detail.account_status === 'deletion_pending' && (
@@ -184,12 +183,27 @@ function UserDetailBody({ detail }: { detail: UserDetail }) {
         </div>
       )}
 
+      {auth.can('data.read') && (
+        <nav className="context-links" aria-label="用户业务记录">
+          {[
+            ['messages', '发出的消息'],
+            ['photos', '上传的照片'],
+            ['daily_task_completions', '任务回答'],
+            ['profiles', '完整资料'],
+          ].map(([entity, label]) => (
+            <a key={entity} href={routeHref('/data', { entity, user_id: detail.user_id })}>
+              {label}
+              <span aria-hidden="true">→</span>
+            </a>
+          ))}
+        </nav>
+      )}
       <div className="split-grid">
         <Panel title="账号" subtitle="邮箱与身份均由服务端账号记录派生">
           <DetailGrid
             items={[
               { label: '昵称', value: detail.name },
-              { label: '掩码邮箱', value: detail.email_masked || '无邮箱（微信或匿名）' },
+              { label: '邮箱', value: detail.email_masked || '无邮箱（微信或匿名）' },
               {
                 label: '邮箱验证',
                 value: detail.email_confirmed ? '已验证' : '未验证',
@@ -220,7 +234,7 @@ function UserDetailBody({ detail }: { detail: UserDetail }) {
 
         <Panel
           title="配对空间"
-          subtitle="只显示关系与成员，不展示空间内私密内容"
+          subtitle="空间成员与业务数据入口"
           actions={
             detail.couple ? (
               <Button
@@ -243,7 +257,7 @@ function UserDetailBody({ detail }: { detail: UserDetail }) {
                   { label: '空间名称', value: detail.couple.name },
                   {
                     label: '空间 ID',
-                    value: <span className="mono">{detail.couple.id.slice(0, 8)}…</span>,
+                    value: <span className="mono">{detail.couple.id}</span>,
                   },
                   { label: '创建时间', value: formatDateTime(detail.couple.created_at) },
                   {
@@ -279,7 +293,7 @@ function UserDetailBody({ detail }: { detail: UserDetail }) {
       </div>
 
       <div className="split-grid">
-        <Panel title="设备" subtitle="Token 只显示末尾 6 位；用于判断设备是否仍在上报" flush>
+        <Panel title="设备" subtitle="设备标识、版本与最近上报情况" flush>
           {detail.devices.length === 0 ? (
             <StateView
               kind="empty"
@@ -293,7 +307,7 @@ function UserDetailBody({ detail }: { detail: UserDetail }) {
                   <tr>
                     <th>平台</th>
                     <th>版本</th>
-                    <th>Token 末尾</th>
+                    <th>设备推送标识</th>
                     <th>最近上报</th>
                     <th>最近推送阶段</th>
                   </tr>
@@ -303,7 +317,9 @@ function UserDetailBody({ detail }: { detail: UserDetail }) {
                     <tr key={device.id}>
                       <td>{device.platform}</td>
                       <td>{device.app_version || '未知'}</td>
-                      <td className="mono">…{device.token_suffix}</td>
+                      <td className="mono identifier">
+                        {device.token || `末尾 ${device.token_suffix}`}
+                      </td>
                       <td>{formatDateTime(device.last_seen_at)}</td>
                       <td>
                         {device.last_delivery_stage
@@ -387,10 +403,6 @@ function UserDetailBody({ detail }: { detail: UserDetail }) {
           </div>
         )}
       </Panel>
-
-      <PrivacyNote>
-        页面不返回聊天正文、任务答案、照片路径或签名地址、邀请码、空间寄语，也不提供修改账号资料或强制解绑的能力。
-      </PrivacyNote>
     </>
   )
 }

@@ -21,11 +21,15 @@ const ROLES: AdminRole[] = ['owner', 'operator', 'support', 'maintainer']
 
 const CAPABILITY_MATRIX: Array<{ label: string; roles: Record<AdminRole, boolean> }> = [
   {
+    label: '完整业务数据、邮箱与照片原图',
+    roles: { owner: true, operator: false, support: false, maintainer: false },
+  },
+  {
     label: '运营概览',
     roles: { owner: true, operator: true, support: true, maintainer: true },
   },
   {
-    label: '用户与掩码邮箱检索',
+    label: '用户资料与检索',
     roles: { owner: true, operator: true, support: true, maintainer: false },
   },
   {
@@ -156,7 +160,7 @@ export function AdminsPage() {
     <>
       <PageHeader
         eyebrow="管理员与权限"
-        title="按岗位授予最小权限"
+        title="管理员权限"
         description="管理员身份来自服务端记录，不依据邮箱后缀或用户自填信息。所有变更立即生效并写入审计；系统至少保留一位有效 owner。"
         actions={
           <Button tone="secondary" icon="refresh" loading={state.loading} onClick={state.reload}>
@@ -282,7 +286,7 @@ export function AdminsPage() {
                           <span>
                             <strong>{member.display_name || '未命名管理员'}</strong>
                             <small>{member.email_masked || '无邮箱'}</small>
-                            <small className="mono">{member.user_id.slice(0, 8)}…</small>
+                            <small className="mono">{member.user_id}</small>
                           </span>
                         </div>
                       </td>
